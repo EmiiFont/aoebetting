@@ -77,7 +77,7 @@ export class Bookie {
         });
         
         //stabilize amounts based on the average of bets amount
-        outcomeTotals.forEach(b => {
+        outcomeTotals.forEach(b => { 
             b.amount /= total;
         })
 
