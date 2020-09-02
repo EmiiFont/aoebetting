@@ -83,4 +83,23 @@ export class Bookie {
 
         return outcomeTotals;
     }
+
+    public async getBetEarnings(bets: Array<Bet>, outcomeWinner: Bet): Promise<void>
+    {
+        bets.forEach(b => {
+            
+            let profit = 0;
+
+            if(b.betSide == outcomeWinner.betSide){
+                if(outcomeWinner.amount < 0){
+                  profit = b.amount / (outcomeWinner.amount/100);
+                }else{
+                  profit = b.amount * (outcomeWinner.amount/100);
+              }
+
+             let stakePlusProfit = b.amount + profit;
+           }
+        })
+
+    }
 }

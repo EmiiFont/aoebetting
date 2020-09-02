@@ -7,8 +7,11 @@ export class OddsConverter {
         
     }
    
-   public async fromProbability(prob: number): Promise<Odd>{
-
+   public async fromProbability(prob: number): Promise<Odd>
+   {
+    
+    if(prob <= 0) return new Odd(0,0,0,0);
+   
     if(prob <= 1){
         prob *= 100;
     }
@@ -29,6 +32,8 @@ export class OddsConverter {
    
     let american = 0;
     
+    if(decimalOdd <= 0) return new Odd(0,0,0,0);
+
     if(decimalOdd >=2){
         american = (decimalOdd - 1) * 100;
     }else{
@@ -41,8 +46,11 @@ export class OddsConverter {
     return new Odd(decimalOdd, 0, american, impliedProbability);
    }
 
-   public async fromAmerican(americanOdd: number): Promise<Odd>{
+   public async fromAmerican(americanOdd: number): Promise<Odd>
+   {
    
+    if(Math.abs(americanOdd) < 100) return new Odd(0,0,0,0);
+
     let decimal = 0;
     let impliedProbability = 0;
     //TODO: missing fractional.
