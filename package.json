@@ -22,8 +22,10 @@
     "express": "^4.17.1",
     "express-winston": "^4.0.5",
     "jest": "^26.4.2",
+    "reflect-metadata": "^0.1.13",
     "ts-jest": "^26.3.0",
     "tsc-watch": "^4.2.9",
+    "typeorm": "^0.2.25",
     "winston": "^3.3.3"
   }
 }
