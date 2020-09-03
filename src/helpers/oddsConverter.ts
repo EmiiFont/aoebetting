@@ -46,7 +46,7 @@ export class OddsConverter {
     return new Odd(decimalOdd, 0, american, impliedProbability);
    }
 
-   public async fromAmerican(americanOdd: number): Promise<Odd>
+   public fromAmerican(americanOdd: number): Odd
    {
    
     if(Math.abs(americanOdd) < 100) return new Odd(0,0,0,0);
@@ -61,7 +61,7 @@ export class OddsConverter {
     }else{
         americanOdd*= -1;
         impliedProbability =  (americanOdd/(americanOdd+100)) * 100;
-        decimal = 1 - (100/americanOdd)
+        decimal = 1 + (100/americanOdd)
     }
 
     return new Odd(decimal,0,americanOdd, impliedProbability);

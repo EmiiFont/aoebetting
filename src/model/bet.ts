@@ -1,11 +1,31 @@
-export interface Bet{
-    betSide: BetSide;
-    amount: number;
+export interface IBet{
+    betId?: number;
+    betType: BetType;
+    eventId: number;
+    stake: number;
+    odd: number;
+    created: Date;
 }
 
-export enum BetSide {
-    //Over is the favorite to win
-    Over,
-    //Under is the underdog
-    Under
+export interface PlayerBet extends IBet{
+    userId?: number;
+    profit?: number;
+    total?: number;
+}
+
+export interface Winnings{
+    playerBet: PlayerBet;
+    profit: number;
+}
+
+export enum BetType {
+    MoneyLine,
+    OverUnder,
+    Spread,
+    Parimutuel
+}
+
+export interface EventsOdd{
+    eventId: number;
+    odd: number;
 }

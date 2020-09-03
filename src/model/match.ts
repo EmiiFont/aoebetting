@@ -30,8 +30,3 @@ export class Match{
     }
 }
 
-export interface MatchOdd{
-    matchId: number;
-    firstPlayerOdd: PlayerOdd;
-    secondPlayerOdd: PlayerOdd;
-}
