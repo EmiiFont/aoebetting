@@ -20,7 +20,7 @@ export class HomeController {
 
     index = async (req: Request, res: Response) => {
         
-        let result = await this._playerService.getPlayers(2);
+        let result = await this._playerService.getPlayerLastMatch(196240);
 
         res.send(result);
     }

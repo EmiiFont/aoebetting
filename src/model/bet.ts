@@ -29,3 +29,15 @@ export interface EventsOdd{
     eventId: number;
     odd: number;
 }
+
+export interface Event{
+  eventId: number;
+  eventOwnerId: number;
+  eventOwnerType: EventOwnerType;
+}
+
+export enum EventOwnerType{
+    Player,
+    Team,
+    MatchSpread
+}
