@@ -1,5 +1,5 @@
 import { Bookie } from "../src/helpers/bookie";
-import { BetType, PlayerBet, EventsOdd } from "../src/model/bet";
+import { BetType, PlayerBet, EventsOdd } from "../src/model/betDto";
 
 test('bookie should return correct odd with no bets', async () => {
 

@@ -1,4 +1,4 @@
-import { IBet, PlayerBet, EventsOdd } from "../model/bet";
+import { IBet, PlayerBet, EventsOdd } from "../model/betDto";
 import { Bookie } from "../helpers/bookie";
 
 

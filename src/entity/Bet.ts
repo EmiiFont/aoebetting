@@ -1,6 +1,7 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, OneToOne, Double } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, OneToOne } from 'typeorm';
+
 import { User } from './User';
-import {BetType} from './BetType';
+import { BetType } from './BetType';
 
 /*
 * Components of sports betting:
@@ -16,13 +17,12 @@ export class Bet {
     @PrimaryGeneratedColumn()
     uid: number;
 
-    @ManyToOne(() => User)
-    @JoinColumn()
-    bettor: number;
+    @ManyToOne(() => User, user => user.bets)
+    bettor: User;
 
     @OneToOne(() => BetType)
     @JoinColumn()
-    type: string;
+    type: BetType;
 
     @Column({ 
         type: "money",
