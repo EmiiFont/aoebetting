@@ -1,5 +1,5 @@
 import { OddsConverter } from './oddsConverter';
-import {IBet, BetType, PlayerBet, EventsOdd} from '../model/bet'
+import {IBet, BetType, PlayerBet, EventsOdd} from '../model/betDto'
 
 export class Bookie {
    

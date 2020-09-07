@@ -1,5 +1,7 @@
  import express, { Application } from 'express';
 
+ import { PostgreDBConnection } from './config/PostgreDBConnection'
+
 class App {
     public app: Application
     public port: number
@@ -10,6 +12,9 @@ class App {
 
         this.middlewares(appInit.middleWares)
         this.routes(appInit.controllers)
+        
+        const dbConn: PostgreDBConnection = new PostgreDBConnection();
+
     }
 
     private middlewares(middleWares: { forEach: (arg0: (middleWare: any) => void) => void; }) {
