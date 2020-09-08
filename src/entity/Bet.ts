@@ -25,8 +25,7 @@ export class Bet {
     type: BetType;
 
     @Column({ 
-        type: "money",
-        length: 100 })
+        type: "money" })
     stake: number;
 
     @Column({ 

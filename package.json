@@ -2,11 +2,11 @@
   "name": "aoebetting",
   "version": "1.0.0",
   "description": "age of empires betting platform",
-  "main": "index.js",   
+  "main": "index.js",
   "scripts": {
     "test": "jest",
     "start": "npx tsc && node ./dist/src/server.js",
-    "dev": "tsc-watch --onSuccess \"nodemon ./dist/src/server.js\""
+    "dev": "set NODE_ENV=dev && tsc-watch --onSuccess \"nodemon ./dist/src/server.js\""
   },
   "author": "",
   "license": "ISC",
@@ -19,6 +19,7 @@
   "dependencies": {
     "@types/jest": "^26.0.10",
     "axios": "^0.20.0",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-winston": "^4.0.5",
     "jest": "^26.4.2",

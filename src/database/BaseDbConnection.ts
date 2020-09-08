@@ -2,7 +2,7 @@ import { createConnection } from 'typeorm';
 import { Connection } from 'typeorm/connection/Connection';
 import { ConnectionOptions } from 'typeorm/connection/ConnectionOptions';
 
-import { PORT } from './constants';
+import { PORT } from '../config/constants';
 
 abstract class BaseDbConnection {
     connectionName: string;
@@ -16,7 +16,7 @@ abstract class BaseDbConnection {
    async setUpConnection(): Promise<Connection>{
         return await createConnection(this.connectionOptions);
     }
-    
+
 }
 
 export { BaseDbConnection };
