@@ -1,4 +1,3 @@
-import { Odd } from "./odd";
 
 export class Player {
     constructor(private username: string,
@@ -27,5 +26,5 @@ export class Player {
 
 export interface PlayerOdd{
     playerId: number;
-    odd: Odd;
+    odd: number;
 }

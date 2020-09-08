@@ -28,6 +28,7 @@ export enum BetType {
 export interface EventsOdd{
     eventId: number;
     odd: number;
+    
 }
 
 export interface Event{

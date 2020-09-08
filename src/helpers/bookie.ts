@@ -3,14 +3,12 @@ import {IBet, BetType, PlayerBet, EventsOdd} from '../model/betDto'
 
 export class Bookie {
    
-    private _oddsConverter: OddsConverter;
     //the fee charged by the bookmaker
     private VIGORISH: number = 0.15;
     //initial amount for the starting probabilities 
     private INITIAL_PROB_WEIGHT: number = 50;
    
     constructor() {
-        this._oddsConverter = new OddsConverter();
     }
     
     public async setOdds(bets: Array<PlayerBet>, eventOdds: Array<EventsOdd>): Promise<Array<EventsOdd>>
@@ -40,7 +38,7 @@ export class Bookie {
         {
             let p = probs[k].odd + this.VIGORISH / numOutcomes;
 
-            impliedOdds.push({eventId:  probs[k].eventId, odd: (await this._oddsConverter.fromProbability(p)).getAmerican});
+            impliedOdds.push({eventId:  probs[k].eventId, odd: OddsConverter.fromProbability(p).americanOdds});
         }
 
         return impliedOdds;
@@ -48,6 +46,8 @@ export class Bookie {
 
     public async balanceProbFromBets(bets: Array<PlayerBet>): Promise<Array<EventsOdd>>
     {
+        //todo: this can be improved saving the last calculated value in cache or database
+        
         let total = 0; 
         let outcomeTotals: Array<EventsOdd> = [];
 
@@ -77,15 +77,12 @@ export class Bookie {
         return outcomeTotals;
     }
 
-    public async getBetEarnings(bets: Array<PlayerBet>, eventIdWinner: number): Promise<Array<PlayerBet>>
+    public getBetEarnings(bet: PlayerBet, eventIdWinner: number): PlayerBet
     {
-        bets.forEach(b => {
-            if(b.eventId == eventIdWinner){
-                  b.profit = (b.stake * this._oddsConverter.fromAmerican(b.odd).getDecimal) - b.stake;
-                  b.total = b.stake + b.profit;
-              }
-        });
-
-        return bets;
+           if(bet.eventId == eventIdWinner) {
+                bet.profit = (bet.stake * OddsConverter.fromAmerican(bet.odd).decimalOdds) - bet.stake;
+                bet.total = bet.stake + bet.profit;
+             }
+        return bet;
     }
 }

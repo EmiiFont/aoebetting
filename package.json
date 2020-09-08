@@ -2,7 +2,7 @@
   "name": "aoebetting",
   "version": "1.0.0",
   "description": "age of empires betting platform",
-  "main": "index.js",
+  "main": "index.js",   
   "scripts": {
     "test": "jest",
     "start": "npx tsc && node ./dist/src/server.js",
