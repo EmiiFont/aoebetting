@@ -3,7 +3,7 @@ import { Bookie } from "../helpers/bookie";
 
 
 export interface IBetService {
-    setBet(userBet: PlayerBet, matchId: number): Promise<Array<any>>;
+    setBet(userBet: PlayerBet, matchId: number): Promise<Boolean>;
 }
 
 export class BetService implements IBetService{
@@ -14,18 +14,28 @@ export class BetService implements IBetService{
       this._bookie = new Bookie();    
     }
    
-    setBet(userBet: PlayerBet, eventId: number): Promise<any[]> {
+    async setBet(userBet: PlayerBet, eventId: number): Promise<Boolean> {
        
         //TODO: validate bet
         
         //first let get the current odd for the player bet
         let currentBets: Array<PlayerBet> = [];
         
-        //second we get the eventOdd 
-        let eventOdd: EventsOdd ;
+        //second we get the eventOdd for both sides e.g player1 vs player2
+        let eventOdd: Array<EventsOdd> = [];
         
-        //this._bookie.setOdds(currentBets,)
-          
-        throw new Error("Method not implemented.");
+        let balancedOdds = await this._bookie.setOdds(currentBets, eventOdd);
+        
+        let oddForPickedSide = balancedOdds.find(v => v.eventId == eventId);
+       
+        if(oddForPickedSide != undefined){
+            userBet.odd = oddForPickedSide?.odd;
+        
+            //TODO: update new balanced odds for the events
+            return true;
+        }
+
+        //log problem
+        return false;
     }
 }

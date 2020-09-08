@@ -41,7 +41,7 @@ test('bookie should return correct odd with no bets', async () => {
     let balancedOdds = await  bookie.setOdds(bets, matchOdds);
     let sided = <EventsOdd>balancedOdds.find(v => v.eventId == 1);
 
-    expect(sided.odd).toBe(177.60252365930597);
+    expect(sided.odd).toBe(177.602523659306);
   });
 
   test('should return the correct earnings of the winners', async () => {
@@ -54,6 +54,7 @@ test('bookie should return correct odd with no bets', async () => {
     matchOdds.push({eventId: 2, odd: 49});
 
     bets.push({eventId: 1, stake: 100, odd: -140, created: new Date(), betType: BetType.MoneyLine, userId: 51});
+   
     for (let index = 1; index < 8; index++) {
       let balancedOdds = await  bookie.setOdds(bets, matchOdds);
       
@@ -62,9 +63,7 @@ test('bookie should return correct odd with no bets', async () => {
       bets.push(bet);
     }
 
-    let winners = await bookie.getBetEarnings(bets, 1);
-    
-    let winner = winners[0];
+    let winner = await bookie.getBetEarnings(bets[0], 1);
    
     expect(winner.profit).toBe(71.42857142857144);
   });
