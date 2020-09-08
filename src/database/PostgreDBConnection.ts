@@ -2,7 +2,6 @@ import { BaseDbConnection } from './BaseDbConnection';
 import { ConnectionOptions } from 'typeorm';
 import {createConnection} from "typeorm";
 
-import { POSTGREPORT } from '../config/constants';
 import { Bet } from '../entity/Bet';
 import { User } from '../entity/User';
 import { BetType } from '../entity/BetType';
