@@ -1,6 +1,6 @@
  import express, { Application } from 'express';
-
- import { PostgreDBConnection } from './config/PostgreDBConnection'
+ import dotenv from 'dotenv';
+ import { PostgreDBConnection } from './database/PostgreDBConnection'
 
 class App {
     public app: Application
@@ -14,7 +14,8 @@ class App {
         this.routes(appInit.controllers)
         
         const dbConn: PostgreDBConnection = new PostgreDBConnection();
-
+        dbConn.setUpConnection();
+        dotenv.config();
     }
 
     private middlewares(middleWares: { forEach: (arg0: (middleWare: any) => void) => void; }) {

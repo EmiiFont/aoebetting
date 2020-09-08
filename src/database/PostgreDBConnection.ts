@@ -14,9 +14,9 @@ class PostgreDBConnection extends BaseDbConnection {
             "type": "postgres",
             "host": dbconfig.host,
             "port": dbconfig.port,
-            "username":  dbconfig.username,
-            "password":  dbconfig.password,
-            "database":  dbconfig.database,
+            "username":  'postgres',
+            "password":  '',
+            "database":  'aoebetting',
             "synchronize": true,
             "logging":process.env.NODE_ENV?.trim() == "dev",
             "entities": [
