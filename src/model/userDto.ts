@@ -1,6 +1,6 @@
-import { Bet } from './Bet';
+import { BetDTO } from "./betDto";
 
-export class User {
+export class UserDTO {
     uid: number;
     firstName: string;
     lastName: string;
@@ -8,6 +8,6 @@ export class User {
     email: string;
     email_verified: boolean;
     dateCreated: Date;
-    bets: Bet[];
+    bets: BetDTO[];
     lastLogin: Date;
 }

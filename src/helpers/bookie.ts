@@ -1,5 +1,5 @@
 import { OddsConverter } from './oddsConverter';
-import {IBet, BetType, PlayerBet, EventsOdd} from '../model/betDto'
+import {BetDTO, BetTypeEnum, EventsOdd} from '../model/betDto'
 
 export class Bookie {
    
@@ -11,7 +11,7 @@ export class Bookie {
     constructor() {
     }
     
-    public async setOdds(bets: Array<PlayerBet>, eventOdds: Array<EventsOdd>): Promise<Array<EventsOdd>>
+    public async setOdds(bets: Array<BetDTO>, eventOdds: Array<EventsOdd>): Promise<Array<EventsOdd>>
     {
         if (eventOdds !== undefined)
         {
@@ -21,10 +21,10 @@ export class Bookie {
             let event1HouseStake = (event1 / 100) * this.INITIAL_PROB_WEIGHT;
             let event2HouseStake = (event2 / 100) * this.INITIAL_PROB_WEIGHT;
             
-            let stubBets: IBet[] = [];
+            let stubBets: BetDTO[] = [];
 
-            stubBets.push({eventId: 1, stake: event1HouseStake, odd: event1, created: new Date(), betType: BetType.MoneyLine});
-            stubBets.push({eventId: 2, stake: event2HouseStake, odd: event2, created: new Date(), betType: BetType.MoneyLine});
+            stubBets.push({eventId: 1, stake: event1HouseStake, odd: event1, created: new Date(), betType: BetTypeEnum.MoneyLine});
+            stubBets.push({eventId: 2, stake: event2HouseStake, odd: event2, created: new Date(), betType: BetTypeEnum.MoneyLine});
             
             bets = stubBets.concat(bets);
         }
@@ -44,7 +44,7 @@ export class Bookie {
         return impliedOdds;
     }
 
-    public async balanceProbFromBets(bets: Array<PlayerBet>): Promise<Array<EventsOdd>>
+    public async balanceProbFromBets(bets: Array<BetDTO>): Promise<Array<EventsOdd>>
     {
         //todo: this can be improved saving the last calculated value in cache or database
         
@@ -64,7 +64,7 @@ export class Bookie {
             if( existingOutcome != undefined){
                 existingOutcome.odd = existingOutcome.odd + amount || amount;
             }else{
-                outcomeTotals.push({eventId: outcome, odd: amount });
+                outcomeTotals.push({eventId: outcome ?? 0, odd: amount });
             }
 
         });
@@ -77,10 +77,10 @@ export class Bookie {
         return outcomeTotals;
     }
 
-    public getBetEarnings(bet: PlayerBet, eventIdWinner: number): PlayerBet
+    public getBetEarnings(bet: BetDTO, eventIdWinner: number): BetDTO
     {
            if(bet.eventId == eventIdWinner) {
-                bet.profit = (bet.stake * OddsConverter.fromAmerican(bet.odd).decimalOdds) - bet.stake;
+                bet.profit = (bet.stake * OddsConverter.fromAmerican(bet.odd ?? 0).decimalOdds) - bet.stake;
                 bet.total = bet.stake + bet.profit;
              }
         return bet;

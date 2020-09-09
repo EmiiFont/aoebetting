@@ -1,24 +1,23 @@
-export interface IBet{
+import { UserDTO } from "./userDto";
+
+export interface BetDTO{
     betId?: number;
-    betType: BetType;
-    eventId: number;
+    betType?: BetTypeEnum;
+    eventId?: number;
     stake: number;
     odd: number;
-    created: Date;
-}
-
-export interface PlayerBet extends IBet{
-    userId?: number;
+    created?: Date;
+    user?: UserDTO;
     profit?: number;
     total?: number;
 }
 
 export interface Winnings{
-    playerBet: PlayerBet;
+    playerBet: BetDTO;
     profit: number;
 }
 
-export enum BetType {
+export enum BetTypeEnum {
     MoneyLine,
     OverUnder,
     Spread,
@@ -28,7 +27,6 @@ export enum BetType {
 export interface EventsOdd{
     eventId: number;
     odd: number;
-    
 }
 
 export interface Event{
