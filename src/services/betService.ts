@@ -44,14 +44,14 @@ export class BetService implements IBetService{
             userBet.odd = oddForPickedSide?.odd;
         
             //TODO: update new balanced odds for the events
-            const newBet = this._betRepository.create({
-                stake: userBet.stake,
-                bettor: userBet.user,
-                datePlaced: new Date(),
-                type: betType
-            });
+            // const newBet = this._betRepository.create({
+            //     stake: 0,
+            //     bettor: userBet.user,
+            //     datePlaced: new Date(),
+            //     type: betType
+            // });
 
-            await this._betRepository.save(newBet);
+            //await this._betRepository.save(newBet);
             
             return true;
         }

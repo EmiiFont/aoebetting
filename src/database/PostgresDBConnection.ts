@@ -5,16 +5,19 @@ import { Bet } from '../entity/Bet';
 import { User } from '../entity/User';
 import { BetType } from '../entity/BetType';
 import dbconfig from '../config/db.config';
+import { Competitor } from '../entity/Competitor';
+import { Match } from '../entity/Match';
+import { UserBet } from '../entity/UserBet';
 
 class PostgresDBConnection extends BaseDbConnection {
     constructor() {
         
         const postgresDBConnOptions: ConnectionOptions = {
             "type": "postgres",
-            "host": dbconfig.host,
-            "port": dbconfig.port,
-            "username":  dbconfig.username,
-            "password":  dbconfig.password,
+            "host": process.env.DB_HOST ,
+            "port": parseInt(process.env.DBPORT ?? "5432"),
+            "username":  process.env.DB_USER,
+            "password":  process.env.DB_PASS,
             "database":  'aoebetting',
             "synchronize": true,
             "logging":process.env.NODE_ENV?.trim() == "dev",
@@ -22,6 +25,9 @@ class PostgresDBConnection extends BaseDbConnection {
                Bet,
                BetType,
                User,
+               Match,
+               Competitor,
+               UserBet
             ]
 
         }
