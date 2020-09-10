@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, OneToOne, RelationId } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, RelationId } from 'typeorm';
 import { Competitor } from './Competitor';
 
 export enum CompetitorTypeEnum{
@@ -35,4 +35,5 @@ export class Match {
 
     @Column()
     lastUpdate: Date;
+    
 }
