@@ -8,6 +8,7 @@ export interface IApiPlayerService {
     getPlayerMatchHistory(profileId: number, numberOfMatches: number):  Promise<Array<Match>>;
     getApiMaps(): Promise<Array<Description>>;
     getPlayerLastMatch(profileID: number): Promise<Match>;
+    getCurrentMatchByPlayers(player1ProfileId: number, player2ProfileId: number): Promise<Match>;
 }
 
 export class ApiPlayerService implements IApiPlayerService {
@@ -65,8 +66,7 @@ export class ApiPlayerService implements IApiPlayerService {
     }
 
      /**
-     * Returns the match information by player profile id, useful to see if a match has completed to 
-     * automatically set the winners
+     * Returns the match information by player profile id
      * 
      * @param profileId - player profile id from aoe2.net
      * @returns Match[] object containing the match information
@@ -80,7 +80,7 @@ export class ApiPlayerService implements IApiPlayerService {
         
         //for some reason aoe2 api doesn't bring who won the match, but that information is available in the 
         //match history of the player;
-        if(lastMatch.finished != null &&lastMatch.finished != undefined){
+        if(lastMatch.finished != null && lastMatch.finished != undefined){
             const apiParam2s = `player/matches?game=aoe2de&profile_id=${match.profile_id}&count=${2}`;
             let matches = <Match[]> await this.http.get(apiParam2s);
             let lastMatchFull = matches.find(v => v.match_id == lastMatch.match_id);
@@ -90,4 +90,39 @@ export class ApiPlayerService implements IApiPlayerService {
       
         return <Match>lastMatch;
     }
+
+     /**
+     * Returns the current match information, useful to see if a match has completed to 
+     * automatically set the winners
+     * 
+     * @param player1ProfileId - first player profile id from aoe2.net
+     * @param player2ProfileId - second player profile id from aoe2.net
+     * @returns Match object containing the match information
+     *
+     */
+    async getCurrentMatchByPlayers(player1ProfileId: number, player2ProfileId: number): Promise<Match> {
+        const apiParams = `player/lastmatch?game=aoe2de&profile_id=${player1ProfileId}`;
+        const apiParams2 = `player/lastmatch?game=aoe2de&profile_id=${player2ProfileId}`;
+        
+        let player1Match = <ApiPlayerMatch>await this.http.get(apiParams);
+        let player2Match = <ApiPlayerMatch>await this.http.get(apiParams2);
+
+        if(player1Match.last_match.match_id == player2Match.last_match.match_id){
+            let lastMatch: Match = player1Match.last_match;
+            //for some reason aoe2 api doesn't bring who won the match, but that information is available in the 
+            //match history of the player;
+            if(lastMatch.finished != null && lastMatch.finished != undefined){
+                const apiParam2s = `player/matches?game=aoe2de&profile_id=${player1Match.profile_id}&count=${2}`;
+                let matches = <Match[]> await this.http.get(apiParam2s);
+                let lastMatchFull = matches.find(v => v.match_id == lastMatch.match_id);
+                
+            lastMatch = lastMatchFull != undefined ? lastMatchFull : lastMatch;
+            }
+            
+            return <Match>lastMatch;
+        }
+      
+        return <Match>{ };
+    }
+
 }

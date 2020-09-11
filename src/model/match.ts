@@ -1,32 +1,10 @@
 import { PlayerOdd } from "./player";
+import { CompetitorTypeEnum } from "../entity/Match";
 
-export class Match{
-    constructor(
-        private matchId: string,
-        private map: string,
-        private openedDate: number,
-        private startedDate: number,
-        private finishedDate: number) {
-    }
-    
-    public get getMatchId() : string {
-        return this.matchId;
-    }
-    
-    public get getMap() : string {
-        return this.map;
-    }
-    
-    public get getOpenedDate() : number {
-        return this.openedDate;
-    }
-    
-    public get getStartedDate() : number {
-        return this.startedDate;
-    }
-
-    public get getFinishedDate() : number {
-        return this.finishedDate;
-    }
+export interface MatchDto{
+    title: string;
+    competitorOneUid: number;
+    competitorTwoUid: number;
+    competitorType: CompetitorTypeEnum;
 }
 
