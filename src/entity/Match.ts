@@ -48,4 +48,11 @@ export class Match {
 
     @RelationId((competitor: Match) => competitor.competitorTwo)
     competitorTwoUid: number;
+
+   @Column()
+    competitorType: CompetitorTypeEnum;
+
+    @Column()
+    lastUpdate: Date;
+
 }

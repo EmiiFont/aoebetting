@@ -1,6 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
-import { Bet } from './Bet';
 import { UserBet } from './UserBet';
 
 @Entity()
