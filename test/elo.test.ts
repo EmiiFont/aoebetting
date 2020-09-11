@@ -29,12 +29,12 @@ test('ELO should be greater than starting elo when winning a match', async () =>
 
   test('predicted win should be greater for greater elo', async () => {
 
-    const playerAElo = 1100;
-    const playerBElo = 1121;
+    const playerAElo = 2243;
+    const playerBElo = 2234;
 
-    let predicted = Elo.predictResult(1121, 1100);
+    let predicted = Elo.predictResult(playerAElo, playerBElo);
     
-    
+    console.log(predicted);
     expect(predicted[0] > predicted[1]).toBeTruthy();
   });
 

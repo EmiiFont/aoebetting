@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Bet } from './Bet';
 
 /* These can be: 
  * - Win Bet/Moneyline Wager
@@ -23,4 +24,7 @@ export class BetType {
 
     @Column({ type: "varchar"})
     rules: string;
+
+    @OneToMany(() => Bet, bet => bet.type)
+    bets: Bet[];
 }
