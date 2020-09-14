@@ -106,7 +106,7 @@ entity "Player" as player {
 bet }|--|| betType
 bet ||--|{ userBet
 competitor ||--|{ matchInformation
-match }|--|| bet
+bet }|--|| match
 match }|--|| competitor
 match ||--|{ matchInformation
 player ||--|{ competitor  
