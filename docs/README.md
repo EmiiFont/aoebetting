@@ -5,6 +5,12 @@
 
 ## Installation
 1- Graphviz:       
- -- Mac: `$ brew install graphviz`  
+ -- MacOS: `$ brew install graphviz`  
  -- Ubuntu: `$ sudo apt install graphviz`  
-2. From `VSCode Settings > Extensions` - search for and install `PlantUML` by `jebbs.plantuml`. 
+2. Go to `VSCode Settings > Extensions` - search for and install `PlantUML` by `jebbs.plantuml`.
+
+## Usage
+Preview diagram:            
+- `Option + D` (MacOS)   
+- `Alt + D` (Ubuntu)   
+

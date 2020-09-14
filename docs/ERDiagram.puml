@@ -1,4 +1,4 @@
-@startuml dbSchema
+@startuml AOEBettingERDiagram
 
 ' hide the spot
 hide circle
