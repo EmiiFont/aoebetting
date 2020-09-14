@@ -1,0 +1,115 @@
+@startuml dbSchema
+
+' hide the spot
+hide circle
+
+' avoid problems with angled crows feet
+skinparam linetype ortho
+
+entity "BetType" as betType {
+  *betTypeUid : numeric <<generated>>
+  --
+  description : varchar(50)
+}
+
+entity "Bet" as bet {
+  *betUid : numeric <<PK>>
+  --
+  *betTypeUid : numeric <<FK>>
+  *matchUid : numeric <<FK>>
+  systemOdd : numeric
+  description : varchar
+  lastUpdate : date
+  
+}
+
+entity "Match" as match {
+  *matchUid : numeric <<PK>>
+  --
+  *competitorTwoUid : numeric <<FK>>
+  *competitorOneUid : numeric <<FK>>
+  *competitorType : numeric <<FK>>
+  matchTitle : varchar(50)
+  lastUpdate : date
+}
+
+entity "Competitor" as competitor {
+  *competitorUid : numeric <<PK>>
+  --
+  *playerId : numeric <<FK>>
+  *teamId : numeric <<FK>>
+}
+
+entity "MatchInformation" as matchInformation {
+  *matchInformationUid : numeric <<PK>>
+  --
+  *matchUid : numeric <<FK>>
+  *competitorUid : numeric <<FK>>
+  matchIdFromApi : int
+  finished : date
+  started : date
+  winnerId : int
+  map : int 
+}
+
+entity "UserBet" as userBet {
+  * userBetUid : numeric <<PK>>
+  --
+  *betUid : numeric <<FK>>
+  *userUid : numeric <<FK>>
+  stake : 
+  odd : 
+  datePlaced : date
+}
+
+entity "User" as user {
+  *userUid : numeric <<PK>>
+  --
+  firstName : varchar(50)
+  lastName : varchar(50)
+  userName : varchar(50)
+  email : varchar(50) 
+  emailVerified : boolean 
+  dateCreated : date
+  betId : numeric <<FK>>
+  lastLogin : date
+}
+
+entity "Player" as player {
+  *playerUid : numeric <<PK>>
+  --
+  competedAs :  <<FK>>
+  firstName : varchar(50)
+  lastName : varchar(50)
+  country : varchar(50)
+  clan : varchar(50)
+  elo : numeric
+  averagedElo : numeric
+  calculatedElo : numeric
+  gamesPlayed : numeric
+  gamesWon : number
+  winStreak : number
+}
+
+' Crow's foot notation reference:
+' Zero or One	|o--
+' Exactly One	||--
+' Zero or Many	}o--
+' One or Many	}|--
+' 
+' Examples:
+' @OneToOne: A ||--|| B
+' @OneToMany: A ||--|{ B
+' @ManyToOne: A }|--|| B
+' @ManyToMany: A }|--|{ B
+
+bet }|--|| betType
+bet ||--|{ userBet
+competitor ||--|{ matchInformation
+match }|--|| bet
+match }|--|| competitor
+match ||--|{ matchInformation
+player ||--|{ competitor  
+user ||--|{ userBet
+
+@enduml
