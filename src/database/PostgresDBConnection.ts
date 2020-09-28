@@ -8,6 +8,7 @@ import dbconfig from '../config/db.config';
 import { Competitor } from '../entity/Competitor';
 import { Match } from '../entity/Match';
 import { UserBet } from '../entity/UserBet';
+import { MatchInformation } from '../entity/MatchInformation';
 
 class PostgresDBConnection extends BaseDbConnection {
     constructor() {
@@ -26,8 +27,9 @@ class PostgresDBConnection extends BaseDbConnection {
                BetType,
                User,
                Match,
+               MatchInformation,
                Competitor,
-               UserBet
+               UserBet,
             ]
 
         }

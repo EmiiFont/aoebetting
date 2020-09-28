@@ -13,10 +13,10 @@ export class Competitor {
     @PrimaryGeneratedColumn()
     uid: number;
 
-    @Column()
+    @Column({nullable: true})
     playerUid: number;
 
-    @Column()
+    @Column({nullable: true})
     teamUid: number;
 
     @Column()

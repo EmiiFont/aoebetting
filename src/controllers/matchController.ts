@@ -47,7 +47,7 @@ export class MatchController {
 
     createMatch = async (req: Request, res: Response) =>{
         const match: MatchDto = req.body
-        
+        match.bestOf = 5;
         let result = await this._matchService.addMatch(match);
         res.send(result);
     }

@@ -1,13 +1,14 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, OneToOne, RelationId, OneToMany } from 'typeorm';
 import { Competitor } from './Competitor';
 import { Bet } from './Bet';
+import { MatchInformation } from './MatchInformation';
 
 export enum CompetitorTypeEnum{
     Player,
     Team
 }
 
-
+//
 @Entity()
 export class Match {
    
@@ -22,8 +23,8 @@ export class Match {
     @Column()
     competitorType: CompetitorTypeEnum;
 
-    @Column({ nullable: true })
-    MatchIdFromApi: string;
+    @Column({default: 1})
+    bestOf: number;
 
     @Column({ nullable: true })
     Started: Date;
@@ -48,4 +49,7 @@ export class Match {
 
     @RelationId((competitor: Match) => competitor.competitorTwo)
     competitorTwoUid: number;
+
+    @OneToMany(() => MatchInformation, matchInfo => matchInfo.match)
+    matchInformation: MatchInformation[];
 }
