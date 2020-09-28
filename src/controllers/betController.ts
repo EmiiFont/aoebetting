@@ -22,15 +22,20 @@ export class BetController {
     public initRoutes() {
         this.router.get(this.path, this.index);
         this.router.get(this.path + '/:id', this.getByMatch);
-        this.router.post(this.path, this.createBet);
+        this.router.post(this.path, this.createSystemBet);
     }
 
     index = async (req: Request, res: Response) => {
        
         res.send({error: 'Nothing implemented'});
     }
+    
+    createUserBet = async (req: Request, res: Response) =>{
+      const userBet: BetDTO = req.body;
 
-    createBet = async (req: Request, res: Response) =>{
+    }
+   
+    createSystemBet = async (req: Request, res: Response) =>{
         const bet: BetDTO = req.body;
         //TODO: get matchUid from body;
         const matchUid = 2;
@@ -48,6 +53,6 @@ export class BetController {
         
         const betRes = await this._betService.getByMatch(matchUid);
  
-        res.send(betRes[0]);
+        res.send(betRes);
     }
 }
