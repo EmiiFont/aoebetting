@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable } from 'typeorm';
 
 import { Competitor } from './Competitor';
 
@@ -11,7 +11,7 @@ export class Player {
     @Column({
         type: "varchar",
         length: 50})
-    name: string;
+        name: string;
 
     @Column({
         type: "varchar",
@@ -48,6 +48,7 @@ export class Player {
     winStreak: number;
 
     @ManyToMany(() => Competitor, competitor => competitor.uid)
+    @JoinTable()
     competedAs: Competitor[];
 
 }
