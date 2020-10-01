@@ -12,7 +12,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 const dbConn: PostgresDBConnection = new PostgresDBConnection();
 
-dbConn.setUpConnection().then(() =>{
+dbConn.setUpConnection().then( () => {
     const app = new App({
       port: PORT,
       controllers: [

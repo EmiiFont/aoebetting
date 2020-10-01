@@ -1,8 +1,6 @@
 import { Competitor } from "../entity/Competitor";
 
-
-export class PlayerDTO {
-    uid: number;
+export class PlayerDto {
     name: string;
     country: string;
     clan: string;
