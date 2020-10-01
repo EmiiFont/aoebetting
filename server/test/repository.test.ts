@@ -1,7 +1,7 @@
 import faker from 'faker';
 
 import { PostgresDBConnection } from '../src/database/PostgresDBConnection';
-import { PlayerDto } from '../src/model/PlayerDto';
+import { PlayerDto } from '../src/model/playerDto';
 import { PlayerRepository } from '../src/repository/PlayerRepository';
 
 
