@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PlayerDTO = void 0;
-class PlayerDTO {
+exports.PlayerDto = void 0;
+class PlayerDto {
 }
-exports.PlayerDTO = PlayerDTO;
+exports.PlayerDto = PlayerDto;

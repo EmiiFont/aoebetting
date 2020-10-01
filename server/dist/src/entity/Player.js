@@ -77,6 +77,7 @@ __decorate([
 ], Player.prototype, "winStreak", void 0);
 __decorate([
     typeorm_1.ManyToMany(() => Competitor_1.Competitor, competitor => competitor.uid),
+    typeorm_1.JoinTable(),
     __metadata("design:type", Array)
 ], Player.prototype, "competedAs", void 0);
 Player = __decorate([
