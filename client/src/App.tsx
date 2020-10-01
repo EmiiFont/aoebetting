@@ -2,6 +2,7 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 import MatchList from './components/match/match';
+import MatchDetail from './components/match/matchDetail';
 
 
 function App() {
@@ -21,7 +22,8 @@ function App() {
           Learn React
         </a>
       </header>
-      <MatchList uid="1"></MatchList>
+       {/* <MatchList uid="1"></MatchList> */}
+       <MatchDetail uid="19"></MatchDetail>
     </div>
   );
 }
