@@ -79,7 +79,7 @@ function Login(){
                             <div className="flex mt-8">
                                 <p className="text-sm">
                                     no account? 
-                                    <a className="ml-1 font-bold text-sm text-orange-500 hover:text-orange-800" href="#register">
+                                    <a className="ml-1 font-bold text-sm text-indigo-500 hover:text-indigo-800" href="#register">
                                         sign up
                                     </a>
                                 </p>
