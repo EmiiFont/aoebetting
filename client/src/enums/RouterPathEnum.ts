@@ -3,4 +3,5 @@ export enum RouterPathEnum {
     ABOUT = '/about',
     MATCH = '/match',
     LOGIN = '/login',
+    LEADERBOARD = '/leaderboard',
 }

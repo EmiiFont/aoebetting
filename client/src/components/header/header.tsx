@@ -36,11 +36,9 @@ function Header(){
                 className="inline-block py-1 md:py-4 text-gray-500 hover:text-gray-100 mr-6"
                 >InPlay</a
               >
-              <a
-                href="#"
+              <Link to={RouterPathEnum.LEADERBOARD}
                 className="inline-block py-1 md:py-4 text-gray-500 hover:text-gray-100 mr-6"
-                >Leaderboard</a
-              >
+                >Leaderboard</Link>
               <a
                 href="#"
                 className="inline-block py-1 md:py-4 text-gray-500 hover:text-gray-100"
