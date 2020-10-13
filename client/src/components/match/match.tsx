@@ -1,5 +1,6 @@
 // import useState next to FunctionComponent
 import React, { useEffect, useState } from 'react';
+import {Link} from 'react-router-dom';
 
 interface MatchProps{
     uid: string;
@@ -36,9 +37,8 @@ return (<div>
             <>
               <div>
                 <h3>
-                  {c.title}
+                 <Link to={`/match/${c.uid}`}> {c.title} </Link>
                 </h3>
-                <p>{c.bestOf}</p>
               </div>
               <hr />
             </>

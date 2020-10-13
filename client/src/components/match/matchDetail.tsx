@@ -25,14 +25,16 @@ interface IMatch{
     matchInformation: MatchInformation[];
 }
 
-function MatchDetail(props: MatchProps){
-  const [match, setMatch] = useState<IMatch>();
-  
+function MatchDetail({match, location}: any){
+  const [matched, setMatch] = useState<IMatch>();
+  console.log(matched);
+  const { params: { uid } } = match;
+
   let typedMatch: IMatch;
 
   useEffect(() => {
     fetch(
-      `http://localhost:4000/match/${props.uid}`,
+      `http://localhost:4000/match/${uid}`,
       {
         method: "GET",
         headers: new Headers({
@@ -43,17 +45,17 @@ function MatchDetail(props: MatchProps){
       .then(res => res.json())
       .then(response => {
           setMatch(response);
-          console.log(response);    
       })
       .catch(error => console.log(error));
-  }, [props.uid]);
+  }, [uid]);
   
   return (
   <div>
-      <h5>{match?.title}</h5>
+      <h5>{matched?.title}</h5>
+      <code>{JSON.stringify(matched, null, 2)}</code>
       <ul>
       {
-          match?.matchInformation.map((c: MatchInformation, index) => (
+          matched?.matchInformation.map((c: MatchInformation, index) => (
           <li key={index}>match information id: {c.uid}</li>
           ))
       }

@@ -1,30 +1,25 @@
 import React from 'react';
 import logo from './logo.svg';
-import './App.css';
 import MatchList from './components/match/match';
 import MatchDetail from './components/match/matchDetail';
+import {Link, BrowserRouter, Route} from 'react-router-dom';
+import HomePage from './pages/homepage';
+import { RouterPathEnum } from './enums/RouterPathEnum';
+import Routes from './routes/routes';
+import Header from './components/header/header';
+import Footer from './components/footer/footer';
 
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload!!!.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-       {/* <MatchList uid="1"></MatchList> */}
-       <MatchDetail uid="19"></MatchDetail>
-    </div>
+
+        <BrowserRouter>
+         <Header />
+       
+         <Routes></Routes>
+         <Footer />
+        </BrowserRouter>
+     
   );
 }
 
