@@ -39,11 +39,15 @@ function Header(){
               <Link to={RouterPathEnum.LEADERBOARD}
                 className="inline-block py-1 md:py-4 text-gray-500 hover:text-gray-100 mr-6"
                 >Leaderboard</Link>
-              <a
+            
+              {/* <a
                 href="#"
                 className="inline-block py-1 md:py-4 text-gray-500 hover:text-gray-100"
-                >Promotions</a
-              >
+                >Promotions</a > */}
+                
+              <Link to={RouterPathEnum.ADMINAREA}
+                className="inline-block py-1 md:py-4 text-gray-500 hover:text-gray-100 mr-6"
+                >Admin</Link>
             </div>
           </div>
           <div className="hidden md:block">
