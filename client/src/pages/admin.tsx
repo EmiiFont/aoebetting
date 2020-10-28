@@ -1,17 +1,8 @@
 import React, { FormEvent, useState } from 'react';
+import AdminMenu from '../components/adminMenu';
 import MatchInformation from '../components/match/matchInformation';
 import postData from '../helpers/postHelper';
 import useFetch from '../hooks/useFetch';
-
-interface MatchFormData{
-   title: string;
-   matchType: number;
-   bestOf: number;
-   player1: number;
-   player2: number;
-   competitorType: number;
-   startDate: Date;
-}
 
 export interface MatchInformation {
     lastUpdate:     Date;
@@ -27,50 +18,39 @@ export interface MatchResponse {
     title:            string;
     competitorType:   number;
     bestOf:           number;
+    competitorOneUid: number;
+    competitorTwoUid: number,
     lastUpdate:       Date;
     matchInformation: MatchInformation[];
-    Started:          null;
-    finished:         null;
+    Started:          Date;
+    finished:         Date;
     uid:              number;
 }
 
 
 function Admin(){
-    const [matchForm, setMatchForm] = useState({
+    const [matchForm, setMatchForm] = useState<MatchResponse>({
         title: '',
-        matchType: 1,
         bestOf: 1,
         competitorOneUid: 1,
         competitorTwoUid: 2,
         competitorType: 1,
-        startDate: new Date()
+        Started: new Date(),
+        finished: new Date(),
+        uid: 0,
+        lastUpdate: new Date(),
+        matchInformation: []
     });
-
-    // const [title, setTitle] = useState('');
-    // const [matchType, setMatchType] = useState(1);
-    // const [bestOf, setBestOf] = useState(1);
-    // const [player1, setPlayer1] = useState(0);
-    // const [player2, setPlayer2] = useState(0);
-    // const [competitorType, setCompetitorType] = useState(1);
-    // const [startDate, setStartDate] = useState(new Date());
 
     const onChangeHandler = (e: any) => {
         setMatchForm({...matchForm, [e.target.name]: e.target.value})
     }
 
-    // setState(prevState => ({
-    //     ...prevState,
-    //     fName: 'your updated value here'
-    //  }));
-
     const submitForm = async (evt: FormEvent<HTMLFormElement>) => {
         evt.preventDefault();
-
-        console.log("Submission starting", matchForm);
-
-        //let matchData: MatchFormData = {title, matchType, bestOf, player1, player2, competitorType, startDate};
          let resp: MatchResponse = await postData(`http://localhost:4000/match`, matchForm);
           console.log("Response", resp);
+          setMatchForm(resp);
       };
 
       return (
@@ -78,7 +58,9 @@ function Admin(){
             <div className="p-4">
                 <div className="flex mb-4">
                     <div className="w-1/6 p-2 text-center"></div>
-                    <div className="w-1/4 p-2 text-center">Games Menu</div>
+                    <div className="w-1/4 p-2 text-center">
+                        <AdminMenu></AdminMenu>
+                    </div>
                     <div className="w-5/6 p-2 text-center">
              <div className="w-full">
                 <div className="flex flex-wrap">
@@ -169,7 +151,7 @@ function Admin(){
                                         </label>
                                         <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
                                          name="startDate"
-                                         value={matchForm.startDate.toLocaleDateString()}
+                                         value={matchForm.Started?.toLocaleDateString()}
                                          onChange={onChangeHandler}
                                         id="grid-city" type="text" placeholder="Albuquerque"/>
                                         </div>
@@ -189,13 +171,13 @@ function Admin(){
                             </div>
                          
                          <div className="flex flex-row">
-                            <MatchInformation title="Game 1"></MatchInformation>
-                            <MatchInformation title="Game 2"></MatchInformation>
-                            </div>
+                             {matchForm.matchInformation.map((mInfo) =>
+                               <MatchInformation key={mInfo.uid.toString()} matchInformation={mInfo}></MatchInformation>
+                             )}
+                        </div>
                     </div>
                 </div>
             </div> 
-
 
                     </div>
                     <div className="w-1/5 p-2 text-center">

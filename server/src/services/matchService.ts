@@ -109,7 +109,7 @@ export class MatchService implements IMatchService {
                 winnerUid: 2
             });
           
-            matchinformation.push(await this._matchInformationRepository.save(matchinfo));
+        matchinformation.push(await this._matchInformationRepository.save(matchinfo));
         }
 
         matchSaved.matchInformation = matchinformation;

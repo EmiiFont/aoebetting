@@ -2,20 +2,20 @@ export interface ApiPlayer {
     profile_id:    number;
     steam_id:      string;
     name:          string;
-    clan:          null;
-    country:       null;
+    clan:          string;
+    country:       string;
     slot:          number;
     slot_type:     number;
     rating:        number;
-    rating_change: null;
-    games:         null;
-    wins:          null;
-    streak:        null;
-    drops:         null;
+    rating_change: number;
+    games:         number;
+    wins:          number;
+    streak:        number;
+    drops:         number;
     color:         number;
     team:          number;
     civ:           number;
-    won:           null;
+    won:           number;
 }
 
 export interface ApiPlayerMatch {
@@ -89,4 +89,37 @@ export interface Description{
  id: number;
  name: string;
 }
+
+export interface TournameEloPlayer {
+    id:                     number;
+    name:                   string;
+    elo:                    number;
+    rank:                   number;
+    url:                    string;
+    voobly_id:              number;
+    steam_id:               string;
+    first_series_timestamp: number;
+    first_series_time:      string;
+    peak_timestamp:         number;
+    peak_time:              string;
+    peak_elo:               number;
+    inactive:               boolean;
+    retired:                boolean;
+    series_played:          number;
+    series_won:             number;
+    games_played:           number;
+    tournaments_played:     number;
+    tournaments_list:       number[];
+}
+
+export interface Tournament {
+    id:              number;
+    name:            string;
+    url:             string;
+    api_url:         string;
+    start_timestamp: number;
+    end_timestamp:   number;
+}
+
+
 

@@ -14,9 +14,9 @@ function Header(){
             >
             <div
               className="inline-block cursor-pointer md:hidden">
-              <div className="bg-gray-400 w-8 mb-2" style={{height: "2px;"}}></div>
-              <div className="bg-gray-400 w-8 mb-2" style={{height: "2px;"}}></div>
-              <div className="bg-gray-400 w-8" style={{height: "2px;"}}></div>
+              <div className="bg-gray-400 w-8 mb-2" style={{height: "2px"}}></div>
+              <div className="bg-gray-400 w-8 mb-2" style={{height: "2px"}}></div>
+              <div className="bg-gray-400 w-8" style={{height: "2px"}}></div>
             </div>
           </div>
           

@@ -54,6 +54,8 @@ class MatchController {
             const match = req.body;
             match.bestOf = 5;
             let result = yield this._matchService.addMatch(match);
+            result.competitorOneUid = 1;
+            result.competitorOneUid = 2;
             res.send(result);
         });
         this.setMatchStarted = (req, res) => __awaiter(this, void 0, void 0, function* () {
