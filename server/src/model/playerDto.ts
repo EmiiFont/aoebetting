@@ -1,14 +1,18 @@
 import { Competitor } from "../entity/Competitor";
 
 export class PlayerDto {
-    name: string;
-    country: string;
+    competedAs: Competitor[];
+    steamId: number;
+	name: string;
+	steamName: string;
+	country: string;
     clan: string;
-    elo: number;
-    averagedElo: number;
-    calculatedElo: number;
+	aoe2NetRating: number;
+	aoeEloComRating: number;
+	rating: number;
+	averageRating: number;
     gamesPlayed: number;
     gamesWon: number;
+	gamesDropped: number;
     winStreak: number;
-    competedAs: Competitor[];
 }

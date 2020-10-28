@@ -79,16 +79,19 @@ entity "Player" as player {
   *playerUid : numeric <<PK>>
   --
   competedAs :  <<FK>>
-  firstName : varchar(50)
-  lastName : varchar(50)
+  steamId : numeric
+  name : varchar(50)
+  steamName : varchar(50)
   country : varchar(50)
   clan : varchar(50)
-  elo : numeric
-  averagedElo : numeric
-  calculatedElo : numeric
+  aoe2NetRating : numeric
+  aoeEloComRating: numeric
+  rating : numeric
+  averageRating : numeric
   gamesPlayed : numeric
-  gamesWon : number
-  winStreak : number
+  gamesWon : numeric
+  gamesDropped : numeric
+  winStreak : numeric
 }
 
 ' Crow's foot notation reference:

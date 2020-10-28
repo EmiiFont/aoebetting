@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable, Double } from 'typeorm';
 
 import { Competitor } from './Competitor';
 
@@ -9,9 +9,18 @@ export class Player {
     uid: number;
 
     @Column({
+        type: "numeric"})
+        steamId: number;
+    
+    @Column({
         type: "varchar",
         length: 50})
         name: string;
+
+    @Column({
+        type: "varchar",
+        length: 50})
+        steamName: string;
 
     @Column({
         type: "varchar",
@@ -24,27 +33,35 @@ export class Player {
     clan: string;
     
     @Column({ 
-        type: "decimal" })
-    elo: number;
+        type: "numeric" })
+    aoe2NetRating: number;
 
     @Column({ 
-        type: "decimal" })
-    averagedElo: number;
+        type: "numeric" })
+    aoeEloComRating: number;
 
     @Column({ 
-        type: "decimal" })
-    calculatedElo: number;
+        type: "numeric" })
+    rating: number;
 
     @Column({ 
-        type: "decimal" })
+        type: "numeric" })
+    averageRating: number;
+
+    @Column({ 
+        type: "numeric" })
     gamesPlayed: number;
 
     @Column({ 
-        type: "decimal" })
+        type: "numeric" })
     gamesWon: number;
 
     @Column({ 
-        type: "decimal" })
+        type: "numeric" })
+    gamesDropped: number;
+
+    @Column({ 
+        type: "numeric" })
     winStreak: number;
 
     @ManyToMany(() => Competitor, competitor => competitor.uid)
