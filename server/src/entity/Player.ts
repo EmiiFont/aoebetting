@@ -20,6 +20,7 @@ export class Player {
 
     @Column({
         type: "varchar",
+        nullable: true,
         length: 50})
     clan: string;
     

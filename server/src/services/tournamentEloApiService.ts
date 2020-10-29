@@ -47,7 +47,8 @@ export class TournamentEloService implements ITournamentEloService {
 
          let play = await this.http.get(apiParams);
 
-         return <TournameEloPlayer[]>play;
+         let players = <TournameEloPlayer[]>play
+         return players.sort((a, b) => b.elo - a.elo);
     }
 
 

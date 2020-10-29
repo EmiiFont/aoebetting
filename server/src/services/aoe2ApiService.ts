@@ -62,7 +62,7 @@ export class ApiPlayerService implements IApiPlayerService {
 
          let play = await this.http.get(apiParams);
 
-         return <ApiPlayer[]>play;
+         return <ApiPlayer[]>play.leaderboard;
     }
 
      /**

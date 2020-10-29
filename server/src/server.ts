@@ -7,6 +7,7 @@ import {HomeController, MatchController, BetController} from './controllers/';
 import { PostgresDBConnection } from './database/PostgresDBConnection';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import { PlayerController } from './controllers/playerController';
 
 
 dotenv.config();
@@ -34,7 +35,8 @@ dbConn.setUpConnection().then(() =>{
       controllers: [
           new HomeController(),
           new MatchController(),
-          new BetController()
+          new BetController(),
+          new PlayerController(),
       ],
       middleWares: [
           cors(options),
