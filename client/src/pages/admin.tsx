@@ -1,6 +1,7 @@
 import React, { FormEvent, useState } from 'react';
 import AdminMenu from '../components/adminMenu';
 import MatchInformation from '../components/match/matchInformation';
+import Widget from '../components/widget';
 import postData from '../helpers/postHelper';
 import useFetch from '../hooks/useFetch';
 
@@ -65,14 +66,9 @@ function Admin(){
              <div className="w-full">
                 <div className="flex flex-wrap">
                     <div  className="w-full">
-                            <div className="bg-white border-t border-b sm:border-l sm:border-r sm:rounded shadow mb-6">
-                                <div className="border-b p-3">
-                                    <h5 className="font-bold uppercase text-blue-600">Match information</h5>
-                                </div>
-                                <div className="p-5">
-                                <div className="flex">
+                          <Widget title="Match Information">
                                    <form className="flex w-full" onSubmit={submitForm}>
-                                <div className="flex-1 pr-4">
+                                   <div className="flex-1 pr-4">
                                     <div className="flex flex-wrap -mx-3 mb-6">
                                         <div className="w-full px-3 mb-6 md:mb-0">
                                         <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
@@ -166,9 +162,7 @@ function Admin(){
                                     <button type="submit">dale</button>
                                   </div>
                                 </form>
-                                 </div>
-                                </div>
-                            </div>
+                             </Widget>
                          
                          <div className="flex flex-row">
                              {matchForm.matchInformation.map((mInfo) =>
