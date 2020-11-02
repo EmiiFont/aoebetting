@@ -2,6 +2,7 @@ import React, { FormEvent, useState } from 'react';
 import AdminMenu from '../components/adminMenu';
 import Match from '../components/match/match';
 import MatchInformation from '../components/match/matchInformation';
+import Widget from '../components/widget';
 import postData from '../helpers/postHelper';
 import useFetch from '../hooks/useFetch';
 

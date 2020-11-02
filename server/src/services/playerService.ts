@@ -1,6 +1,4 @@
 import { getRepository, Like } from "typeorm";
-import { isThisTypeNode } from "typescript";
-import { tournamentElo } from "../config/apiUrl";
 import { Competitor } from "../entity/Competitor";
 import { Player } from "../entity/Player";
 import { ApiPlayer } from "../model/apiInterfaces";
@@ -9,7 +7,7 @@ import { ApiPlayerService, IApiPlayerService } from "./aoe2ApiService";
 import { ITournamentEloService, TournamentEloService } from "./tournamentEloApiService";
 
 export interface IPlayerService{
-    addPlayer(playerDto: PlayerDto): Promise<Player>;
+    updatePlayer(playerDto: PlayerDto): Promise<Player>;
     autoAddPlayers(top: number): Promise<Player[]>;
     getPlayer(id: number): Promise<Player | undefined>;
     searchPlayer(name: string): Promise<Player[]>;
@@ -96,8 +94,7 @@ export class PlayerService implements IPlayerService{
        return <Player[]>[];
     }
 
-
-    addPlayer(playerDto: PlayerDto): Promise<Player> {
-        throw new Error("d");
+    updatePlayer(playerDto: PlayerDto): Promise<Player> {
+        throw new Error("Implement this method");
     }
 }
