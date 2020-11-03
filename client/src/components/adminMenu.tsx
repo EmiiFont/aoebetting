@@ -1,4 +1,6 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import { RouterPathEnum } from '../enums/RouterPathEnum';
 
 export default function AdminMenu(){
 
@@ -6,7 +8,7 @@ export default function AdminMenu(){
 <div className="my-1">
       <div className="bg-white rounded overflow-hidden shadow-lg">
         <div className="border-b">
-          <a href="#" className="px-3 py-2 hover:bg-gray-100 flex">
+        <Link to={RouterPathEnum.ADMINAREA + '/player'} className="px-3 py-2 hover:bg-gray-100 flex">
             <div className="text-gray-800">
               <svg
                 fill="none"
@@ -24,8 +26,9 @@ export default function AdminMenu(){
               <p className="text-sm font-medium text-gray-800 leading-none">Add Players</p>
               <p className="text-xs text-gray-500">Add/manage players &amp; teams</p>
             </div>
-          </a>
-          <a href="#" className="px-4 py-2 hover:bg-gray-100 flex">
+          </Link>
+          <Link to={RouterPathEnum.ADMINAREA + '/match'}
+             className="px-4 py-2 hover:bg-gray-100 flex">
             <div className="text-gray-800">
               <svg
                 fill="none"
@@ -43,7 +46,7 @@ export default function AdminMenu(){
               <p className="text-sm font-medium text-gray-800 leading-none">Match settings</p>
               <p className="text-xs text-gray-500">Create, update, set winners</p>
             </div>
-          </a>
+          </Link>
         </div>
 
         <div className="">

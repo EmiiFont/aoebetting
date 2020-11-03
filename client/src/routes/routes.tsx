@@ -7,6 +7,8 @@ import Admin from '../pages/admin';
 // import MatchList from '../components/match/match';
 // import MatchDetail from '../components/match/matchDetail';
 import { RouterPathEnum } from '../enums/RouterPathEnum';
+import Player from '../pages/admin/player';
+import EditMatch from '../pages/admin/editMatch';
 
 export default function Routes() {
     return (
@@ -17,6 +19,9 @@ export default function Routes() {
          <Route exact path={RouterPathEnum.LOGIN} component={Login}></Route>
          <Route exact path={RouterPathEnum.LEADERBOARD} component={Leaderboard}></Route>
          <Route exact path={RouterPathEnum.ADMINAREA} component={Admin}></Route>
+         <Route exact path={RouterPathEnum.ADMINAREA + '/match'} component={Admin}></Route>
+         <Route exact path={RouterPathEnum.ADMINAREA + '/player'} component={Player}></Route>
+         <Route exact path={RouterPathEnum.ADMINAREA + '/match' + '/:uid'} component={EditMatch}></Route>
       </Switch>
     );
   }
