@@ -10,6 +10,7 @@ export interface IPlayerService{
     updatePlayer(playerDto: PlayerDto): Promise<Player>;
     autoAddPlayers(top: number): Promise<Player[]>;
     getPlayer(id: number): Promise<Player | undefined>;
+    getPlayes(page: number, count: number): Promise<Player[] | undefined>;
     searchPlayer(name: string): Promise<Player[]>;
 }
 
@@ -24,6 +25,22 @@ export class PlayerService implements IPlayerService{
        this._aoeApiService = new ApiPlayerService(); 
        this._tournamentElo = new TournamentEloService(); 
     }
+
+
+    async getPlayes(page: number, count: number): Promise<Player[] | undefined> {
+      
+        const take = count || 10
+        const skip = page || 0
+
+        const [result, total] = await this._playerRepository.findAndCount(
+         {
+            take: take,
+            skip: skip
+          }
+        );
+   
+        return result;
+    }
     
     async searchPlayer(name: string): Promise<Player[]> {
         //TODO: use parameterized queries.
@@ -37,10 +54,16 @@ export class PlayerService implements IPlayerService{
     async autoAddPlayers(top: number): Promise<Player[]> {
         let aoePlayers: ApiPlayer[] = await this._aoeApiService.getPlayers(top);
         let tournamentEloPlayers = await this._tournamentElo.getPlayers();
+        let addedPlayers: Player[] = [];
         
-        let exist: any = [];
-        tournamentEloPlayers.forEach(async tourEloPlayer => {
-            let aoe2EloPlayer = aoePlayers.filter(v => v.name.toLocaleLowerCase().indexOf(tourEloPlayer.name.toLocaleLowerCase()) >= 0);
+        try {
+       
+         tournamentEloPlayers.forEach(async tourEloPlayer => {
+             let aoe2EloPlayer = aoePlayers.filter(v => v.name.toLocaleLowerCase().indexOf(tourEloPlayer.name.toLocaleLowerCase()) >= 0);
+             
+             if(aoe2EloPlayer.length > 0){
+            
+            let aoeEloFullPlayer = await this._tournamentElo.getPlayerInfo(tourEloPlayer.id);
             
             const [first] = aoe2EloPlayer;
             let playerToSave: Player | undefined;
@@ -53,45 +76,56 @@ export class PlayerService implements IPlayerService{
                     }
                 })
             }
+            let steamId = aoe2EloPlayer.find(c => c.steam_id ==  aoeEloFullPlayer.steam_id);
 
-            if(first != undefined){
+            if(steamId != undefined){
                 let tournamentElo = tourEloPlayer.elo;
                 
                 let averagedElo = (first.rating + tournamentElo) / 2;
-                
+
                 //player exist update
-                playerToSave = await this._playerRepository.findOne({name: first.name});
+                playerToSave = await this._playerRepository.findOne({steamName: first.name});
 
                 if(playerToSave != undefined){
-                    let tournamentPlayerInfo = await this._tournamentElo.getPlayerInfo(tourEloPlayer.id);
-                 
                     //player is retired what to do?
-                    if(tournamentPlayerInfo.retired){
+                    if(aoeEloFullPlayer.retired){
 
                     }else{
-                         playerToSave.averagedElo = averagedElo;
-                         playerToSave.elo = first.rating;
+                         playerToSave.averageRating = averagedElo;
+                         playerToSave.aoe2NetRating = first.rating;
+                         playerToSave.aoeEloComRating =  tournamentElo;
+                         playerToSave.rating = 0
                          playerToSave.gamesPlayed = first.games;
                          playerToSave.gamesWon = first.wins;
-                         playerToSave.calculatedElo =  tournamentElo;
                     }
-
                 }else{
                     playerToSave = this._playerRepository.create({
-                        name: first.name,
-                        elo: first.rating,
+                        steamId:  first.steam_id,
+                        name: tourEloPlayer.name,
+                        steamName: first.name,
+                        aoe2NetRating: first.rating,
+                        averageRating: averagedElo,
+                        aoeEloComRating: tournamentElo,
+                        rating: 0,
                         gamesPlayed: first.games,
                         country: first.country,
                         winStreak: first.streak,
-                        averagedElo: averagedElo,
-                        calculatedElo: tournamentElo,
-                        gamesWon: first.wins
+                        gamesWon: first.wins,
+                        gamesDropped: 0,
+                        clan: "",
                     });
                 }
-                this._playerRepository.save(playerToSave);
-            }
+               addedPlayers.push(await this._playerRepository.save(playerToSave));
+             }
+           }
         })
-       return <Player[]>[];
+       return addedPlayers;
+    } catch (error) {
+            //log error
+            console.log(error);
+      }
+
+      return addedPlayers;
     }
 
     updatePlayer(playerDto: PlayerDto): Promise<Player> {

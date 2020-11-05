@@ -2,7 +2,7 @@ import { Competitor } from "../entity/Competitor";
 
 export class PlayerDto {
     competedAs: Competitor[];
-    steamId: number;
+    steamId: string;
 	name: string;
 	steamName: string;
 	country: string;

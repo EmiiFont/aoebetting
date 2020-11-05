@@ -9,8 +9,9 @@ export class Player {
     uid: number;
 
     @Column({
-        type: "numeric"})
-        steamId: number;
+        type: "varchar",
+        length: 20})
+        steamId: string;
     
     @Column({
         type: "varchar",

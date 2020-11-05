@@ -13,7 +13,7 @@ test('Player should be added to the DB via its repository', async () => {
       const playerRepository = connection.getCustomRepository(PlayerRepository);
 
       let aPlayer = new PlayerDto();
-      aPlayer.steamId = faker.random.number({ min: 10000000000000000, max: 99999999999999999});
+      aPlayer.steamId = faker.random.number({ min: 10000000000000000, max: 99999999999999999}).toString();
       aPlayer.name = `${faker.name.firstName() + ' ' + faker.name.lastName()}`;
       aPlayer.steamName = `${faker.internet.userName() + faker.random.number({ min: 100, max: 999})}`
       aPlayer.country = faker.address.countryCode();
