@@ -1,6 +1,8 @@
 import { getRepository, Like } from "typeorm";
 import { Competitor } from "../entity/Competitor";
 import { Player } from "../entity/Player";
+import { Team } from "../entity/team";
+import { Pagination } from "../helpers/pagination";
 import { ApiPlayer } from "../model/apiInterfaces";
 import { PlayerDto } from "../model/playerDto";
 import { ApiPlayerService, IApiPlayerService } from "./aoe2ApiService";
@@ -10,13 +12,13 @@ export interface IPlayerService{
     updatePlayer(playerDto: PlayerDto): Promise<Player>;
     autoAddPlayers(top: number): Promise<Player[]>;
     getPlayer(id: number): Promise<Player | undefined>;
-    getPlayes(page: number, count: number): Promise<Player[] | undefined>;
+    getPlayes(page: number, count: number, search: string): Promise<Pagination<Player>>;
     searchPlayer(name: string): Promise<Player[]>;
 }
 
 export class PlayerService implements IPlayerService{
     
-    private _competitorRepository = getRepository(Competitor);
+    private _teamRepository = getRepository(Team);
     private _playerRepository = getRepository(Player);
     private _aoeApiService: IApiPlayerService;
     private _tournamentElo: ITournamentEloService;
@@ -26,25 +28,32 @@ export class PlayerService implements IPlayerService{
        this._tournamentElo = new TournamentEloService(); 
     }
 
-
-    async getPlayes(page: number, count: number): Promise<Player[] | undefined> {
+    async getPlayes(page: number, count: number, search: string): Promise<Pagination<Player>> {
+        const take = count || 10;
+        let skip = page || 0;
       
-        const take = count || 10
-        const skip = page || 0
-
+        if(search.length > 0){
+           skip = 0;
+        }
         const [result, total] = await this._playerRepository.findAndCount(
          {
+            where: { name: Like('%' + search + '%') }, order: { name: "DESC" },
             take: take,
             skip: skip
           }
         );
    
-        return result;
+        return {
+            page: page,
+            data: result,
+            totalCount: total,
+            limit: take
+        };
     }
     
     async searchPlayer(name: string): Promise<Player[]> {
         //TODO: use parameterized queries.
-        return await this._playerRepository.find({ where: `name ILIKE '%${name}%'`, });
+        return await this._playerRepository.find({where: `name ILIKE '%${name}%'`, });
     }
     
     async getPlayer(id: number): Promise<Player | undefined> {
@@ -56,6 +65,8 @@ export class PlayerService implements IPlayerService{
         let tournamentEloPlayers = await this._tournamentElo.getPlayers();
         let addedPlayers: Player[] = [];
         
+        console.log("here");
+
         try {
        
          tournamentEloPlayers.forEach(async tourEloPlayer => {
@@ -77,7 +88,6 @@ export class PlayerService implements IPlayerService{
                 })
             }
             let steamId = aoe2EloPlayer.find(c => c.steam_id ==  aoeEloFullPlayer.steam_id);
-
             if(steamId != undefined){
                 let tournamentElo = tourEloPlayer.elo;
                 
@@ -116,6 +126,7 @@ export class PlayerService implements IPlayerService{
                     });
                 }
                addedPlayers.push(await this._playerRepository.save(playerToSave));
+               await this._teamRepository.save({name: playerToSave.name, searchable: false});
              }
            }
         })

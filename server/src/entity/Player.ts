@@ -1,6 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable, Double } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable, Double, OneToMany } from 'typeorm';
 
-import { Competitor } from './Competitor';
+import { TeamPlayer } from './teamPlayer';
 
 @Entity()
 export class Player {
@@ -66,8 +66,7 @@ export class Player {
         type: "numeric" })
     winStreak: number;
 
-    @ManyToMany(() => Competitor, competitor => competitor.uid)
-    @JoinTable()
-    competedAs: Competitor[];
+    @OneToMany(() => TeamPlayer, tempL => tempL.team)
+    teamPlayer: TeamPlayer[];
 
 }

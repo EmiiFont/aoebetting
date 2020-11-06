@@ -9,6 +9,7 @@ import Admin from '../pages/admin';
 import { RouterPathEnum } from '../enums/RouterPathEnum';
 import Player from '../pages/admin/player';
 import EditMatch from '../pages/admin/editMatch';
+import CreateMatch from '../pages/admin/createMatch';
 
 export default function Routes() {
     return (
@@ -21,6 +22,7 @@ export default function Routes() {
          <Route exact path={RouterPathEnum.ADMINAREA} component={Admin}></Route>
          <Route exact path={RouterPathEnum.ADMINAREA + '/match'} component={Admin}></Route>
          <Route exact path={RouterPathEnum.ADMINAREA + '/player'} component={Player}></Route>
+         <Route exact path={RouterPathEnum.ADMINAREA + '/match/create'} component={CreateMatch}></Route>
          <Route exact path={RouterPathEnum.ADMINAREA + '/match' + '/:uid'} component={EditMatch}></Route>
       </Switch>
     );

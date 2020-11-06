@@ -89,51 +89,54 @@ export class MatchService implements IMatchService {
         const matchinformation: Array<MatchInformation> = [];
         
         const minimumMatchesToPlay = Math.trunc(matchDto.bestOf / 2) + 1;
-
-        let match = this._matchRepository.create({
-            title: matchDto.title,
-            competitorOneUid: matchDto.competitorOneUid,
-            competitorTwoUid: matchDto.competitorTwoUid,
-            competitorType: matchDto.competitorType,
-            lastUpdate: new Date(),
-            bestOf: matchDto.bestOf,
-            matchInformation: matchinformation
-        });
         
-        const matchSaved = await this._matchRepository.save(match);
-       
-        for(let i=1; i<= minimumMatchesToPlay; i++){
-            let matchinfo = this._matchInformationRepository.create({
+        let matchexist = await this._matchRepository.findOne(matchDto.uid, {relations: ['matchInformation']});
+        let matchSaved;
+        console.log(matchexist);
+        if(matchexist){
+            matchexist.title= matchDto.title;
+            matchexist.competitorType = matchDto.competitorType;
+            matchexist.lastUpdate = new Date();
+            matchexist.bestOf = matchDto.bestOf;
+            matchSaved = await this._matchRepository.save(matchexist);
+        }else{
+            matchexist = this._matchRepository.create({
+                title: matchDto.title,
+                competitorType: matchDto.competitorType,
                 lastUpdate: new Date(),
-                match: matchSaved,
-                winnerUid: 2
+                bestOf: matchDto.bestOf,
+                matchInformation: matchinformation
             });
-          
-        matchinformation.push(await this._matchInformationRepository.save(matchinfo));
-        }
 
-        matchSaved.matchInformation = matchinformation;
-
-        await this.setMatchInformationWinner(match.uid);
+            matchSaved = await this._matchRepository.save(matchexist);
+            for(let i=1; i<= minimumMatchesToPlay; i++){
+                let matchinfo = this._matchInformationRepository.create({
+                    lastUpdate: new Date(),
+                    match: matchSaved,
+                    winnerUid: 2
+                });
+              
+            matchinformation.push(await this._matchInformationRepository.save(matchinfo));
+            matchSaved.matchInformation = matchinformation;
+          }
+      }
+        await this.setMatchInformationWinner(matchexist.uid);
 
         return matchSaved;
     }
 
     async setMatchInformationWinner(matchUid: number){
-        const match = await this._matchRepository.findOne(matchUid, {relations: ['matchInformation']});
+        // const match = await this._matchRepository.findOne(matchUid, {relations: ['matchInformation']});
 
-        const competitor = await this._competitorRepository.findOne(1);
-        console.log(competitor);
-        if(competitor != undefined){
+        // const competitor = await this._competitorRepository.findOne(1);
+        // if(competitor != undefined){
+        //     const matchInfo = match?.matchInformation.find(c => c.Started == null && c.finished == null);
             
-            const matchInfo = match?.matchInformation.find(c => c.Started == null && c.finished == null);
-            
-            if(matchInfo != undefined){
-               console.log("no match INFO")
-                matchInfo.competitor = competitor
-                this._matchInformationRepository.save(matchInfo);
-            }
-        }
+        //     if(matchInfo != undefined){
+        //         matchInfo.competitor = competitor
+        //         this._matchInformationRepository.save(matchInfo);
+        //     }
+        // }
        
     }
 

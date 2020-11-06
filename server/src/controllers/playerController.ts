@@ -17,16 +17,17 @@ export class PlayerController {
 
     public initRoutes() {
         this.router.get(this.path, this.index);
-        this.router.get(this.path + '/:id', this.getPlayer);
+        //this.router.get(this.path + '/:id', this.getPlayer);
         this.router.post(this.path, this.search);
-        this.router.get(this.path, this.autoAdd);
+        this.router.get(this.path + '/autoAdd', this.autoAdd);
     }
 
     index = async (req: Request, res: Response) => {
         const page = req.query.page != undefined ? parseInt(req.query.page.toString()) : 0;
-        const count = req.query.count != undefined ? parseInt(req.query.count.toString()) : 10;;
+        const count = req.query.count != undefined ? parseInt(req.query.count.toString()) : 10;
+        const search = req.query.search != undefined ? req.query.search.toString() : "";
         
-        let result = await this._playerService.getPlayes(page, count);
+        let result = await this._playerService.getPlayes(page, count, search);
      
         res.send(result);
     }

@@ -2,10 +2,14 @@ import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, OneToOne
 import { Competitor } from './Competitor';
 import { Bet } from './Bet';
 import { MatchInformation } from './MatchInformation';
+import { MatchCompetitor } from './matchCompetitor';
 
 export enum CompetitorTypeEnum{
-    Player,
-    Team
+    OneVsOne,
+    TwoVsTwo,
+    ThreeVsThree,
+    FourVsFour,
+    FreeForAll
 }
 
 //
@@ -32,23 +36,14 @@ export class Match {
     @Column({ nullable: true })
     finished: Date;
 
-    @Column()
+    @Column({default: new Date()})
     lastUpdate: Date;
 
     @OneToMany(() => Bet, bet => bet.match)
     bets: Bet[];
 
-    @ManyToOne(() => Competitor, competitor => competitor.competitorOneMatch)
-    competitorOne: Competitor;
-
-    @ManyToOne(() => Competitor, competitor => competitor.competitorTwoMatch)
-    competitorTwo: Competitor;
-
-    @RelationId((competitor: Match) => competitor.competitorOne)
-    competitorOneUid: number;
-
-    @RelationId((competitor: Match) => competitor.competitorTwo)
-    competitorTwoUid: number;
+    @OneToMany(() => MatchCompetitor, matchInfo => matchInfo.match)
+    matchCompetitor: MatchCompetitor[];
 
     @OneToMany(() => MatchInformation, matchInfo => matchInfo.match)
     matchInformation: MatchInformation[];

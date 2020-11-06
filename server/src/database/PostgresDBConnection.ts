@@ -10,6 +10,9 @@ import { Match } from '../entity/Match';
 import { UserBet } from '../entity/UserBet';
 import { MatchInformation } from '../entity/MatchInformation';
 import { Player } from '../entity/Player';
+import { Team } from '../entity/team';
+import { TeamPlayer } from '../entity/teamPlayer';
+import { MatchCompetitor } from '../entity/matchCompetitor';
 
 class PostgresDBConnection extends BaseDbConnection {
     constructor() {
@@ -31,7 +34,10 @@ class PostgresDBConnection extends BaseDbConnection {
                MatchInformation,
                Competitor,
                UserBet,
-               Player
+               Player,
+               Team,
+               TeamPlayer,
+               MatchCompetitor
             ]
 
         }

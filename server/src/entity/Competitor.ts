@@ -21,10 +21,4 @@ export class Competitor {
 
     @Column()
     competitorType: CompetitorTypeEnum;
-
-    @OneToMany(() => Match, match => match.competitorOne)
-    competitorOneMatch: Match[];
-
-    @OneToMany(() => Match, match => match.competitorTwo)
-    competitorTwoMatch: Match[];
 }

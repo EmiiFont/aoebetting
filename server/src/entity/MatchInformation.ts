@@ -20,13 +20,10 @@ export class MatchInformation {
     @Column({ nullable: true })
     finished: Date;
 
-    @Column()
+    @Column({default: new Date()})
     lastUpdate: Date;
 
-    @ManyToOne(() => Competitor, competitor => competitor.competitorOneMatch)
-    competitor: Competitor;
-
-    @RelationId((competitor: MatchInformation) => competitor.competitor)
+    @Column({ nullable: true })
     winnerUid: number;
     
     @ManyToOne(() => Match, match => match.matchInformation)

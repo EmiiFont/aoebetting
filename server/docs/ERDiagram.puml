@@ -1,5 +1,4 @@
 @startuml AOEBettingERDiagram
-
 ' hide the spot
 hide circle
 
@@ -26,25 +25,37 @@ entity "Bet" as bet {
 entity "Match" as match {
   *matchUid : numeric <<PK>>
   --
-  *competitorTwoUid : numeric <<FK>>
-  *competitorOneUid : numeric <<FK>>
+  *matchCompetitor: numeric <<FK>>
   *competitorType : numeric <<FK>>
   matchTitle : varchar(50)
   lastUpdate : date
 }
 
-entity "Competitor" as competitor {
-  *competitorUid : numeric <<PK>>
+entity "MatchCompetitor" as matchCompetitor{
+  *matchCompetitorUid : numeric <<PK>>
   --
-  *playerId : numeric <<FK>>
-  *teamId : numeric <<FK>>
+  *teamUid : numeric <<FK>>
+  *matchUid : numeric <<FK>>
+}
+
+entity "Team" as team {
+  *teamUid : numeric <<PK>>
+  --
+  *name: varchar(100)
+  *lastUpdate: date
+}
+
+entity "TeamPlayer" as teamPlayer {
+  *teamPlayerUid: numeric <<PK>>
+  --
+  *teamUid: numeric <<FK>>
+  *playerUid: numeric <<FK>>
 }
 
 entity "MatchInformation" as matchInformation {
   *matchInformationUid : numeric <<PK>>
   --
   *matchUid : numeric <<FK>>
-  *competitorUid : numeric <<FK>>
   matchIdFromApi : int
   finished : date
   started : date
@@ -108,11 +119,11 @@ entity "Player" as player {
 
 bet }|--|| betType
 bet ||--|{ userBet
-competitor ||--|{ matchInformation
 bet }|--|| match
-match }|--|| competitor
 match ||--|{ matchInformation
-player ||--|{ competitor  
+player ||--|{ teamPlayer
+team ||--|{ teamPlayer
+team ||--|{ matchCompetitor
+match||--|{ matchCompetitor
 user ||--|{ userBet
-
 @enduml

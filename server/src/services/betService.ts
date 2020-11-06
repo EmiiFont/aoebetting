@@ -34,11 +34,11 @@ export class BetService implements IBetService{
         
         const firstPlayerElo = 2234;
         const secondPlayerElo = 2243;
-        if(match?.competitorType == CompetitorTypeEnum.Player){
-            //TODO: get player from player table
-        }else{
-             //TODO: get team from team table
-        }
+        // if(match?.competitorType == CompetitorTypeEnum.Player){
+        //     //TODO: get player from player table
+        // }else{
+        //      //TODO: get team from team table
+        // }
         
         //TODO: this is where we can use our stimation or elo calculation for specific cases.
         const probFromElo = Elo.predictResult(firstPlayerElo, secondPlayerElo);
