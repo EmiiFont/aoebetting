@@ -126,7 +126,6 @@ export class PlayerService implements IPlayerService{
                     });
                 }
                addedPlayers.push(await this._playerRepository.save(playerToSave));
-               await this._teamRepository.save({name: playerToSave.name, searchable: false});
              }
            }
         })

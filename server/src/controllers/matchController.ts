@@ -60,5 +60,4 @@ export class MatchController {
         res.send(result);
     }
 
-
 }

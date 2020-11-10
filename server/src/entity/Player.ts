@@ -69,4 +69,6 @@ export class Player {
     @OneToMany(() => TeamPlayer, tempL => tempL.team)
     teamPlayer: TeamPlayer[];
 
+    @Column({default: new Date()})
+    lastUpdate: Date;
 }

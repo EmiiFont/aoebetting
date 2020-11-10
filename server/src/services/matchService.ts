@@ -1,4 +1,4 @@
-import { Match } from "../entity/Match"
+import { CompetitorTypeEnum, Match } from "../entity/Match"
 
 import { getRepository, DeleteDateColumn, Connection, getConnection } from "typeorm";
 import { MatchDto } from "../model/match";
@@ -6,6 +6,9 @@ import { ApiPlayerService } from "./aoe2ApiService";
 import { ExceptionHandler } from "winston";
 import { MatchInformation } from "../entity/MatchInformation";
 import { Competitor } from "../entity/Competitor";
+import { MatchCompetitor } from "../entity/matchCompetitor";
+import { Team } from "../entity/team";
+import { TeamPlayer } from "../entity/teamPlayer";
 
 export interface IMatchService{
     addMatch(matchDto: MatchDto): Promise<Match>;
@@ -19,13 +22,14 @@ export class MatchService implements IMatchService {
 
     private _matchRepository = getRepository(Match);
     private _matchInformationRepository = getRepository(MatchInformation);
-    private _competitorRepository = getRepository(Competitor);
+    private _teamRepository = getRepository(Team);
+    private _teamPlayerRepository = getRepository(TeamPlayer);
+    private _matchCompetitor = getRepository(MatchCompetitor);
     private _aoeApiService: ApiPlayerService;
     
     constructor() {
        this._aoeApiService = new ApiPlayerService(); 
     }
-   
     
     async getMatches(perPage: number, page: number): Promise<Match[]> {
        
@@ -87,20 +91,22 @@ export class MatchService implements IMatchService {
     async addMatch(matchDto: MatchDto): Promise<Match> {
 
         const matchinformation: Array<MatchInformation> = [];
-        
+          
         const minimumMatchesToPlay = Math.trunc(matchDto.bestOf / 2) + 1;
-        
-        let matchexist = await this._matchRepository.findOne(matchDto.uid, {relations: ['matchInformation']});
         let matchSaved;
-        console.log(matchexist);
-        if(matchexist){
-            matchexist.title= matchDto.title;
-            matchexist.competitorType = matchDto.competitorType;
-            matchexist.lastUpdate = new Date();
-            matchexist.bestOf = matchDto.bestOf;
-            matchSaved = await this._matchRepository.save(matchexist);
+        
+        if(matchDto.uid){
+            matchSaved = await this._matchRepository.findOne(matchDto.uid, {relations: ['matchInformation']});
+        }
+        console.log(matchSaved);
+        if(matchSaved){
+            matchSaved.title= matchDto.title;
+            matchSaved.competitorType = matchDto.competitorType;
+            matchSaved.lastUpdate = new Date();
+            matchSaved.bestOf = matchDto.bestOf;
+            matchSaved = await this._matchRepository.save(matchSaved);
         }else{
-            matchexist = this._matchRepository.create({
+            matchSaved = this._matchRepository.create({
                 title: matchDto.title,
                 competitorType: matchDto.competitorType,
                 lastUpdate: new Date(),
@@ -108,21 +114,69 @@ export class MatchService implements IMatchService {
                 matchInformation: matchinformation
             });
 
-            matchSaved = await this._matchRepository.save(matchexist);
+            matchSaved = await this._matchRepository.save(matchSaved);
+            console.log("Match Added");
+            console.log(minimumMatchesToPlay);
             for(let i=1; i<= minimumMatchesToPlay; i++){
                 let matchinfo = this._matchInformationRepository.create({
                     lastUpdate: new Date(),
                     match: matchSaved,
                     winnerUid: 2
                 });
-              
             matchinformation.push(await this._matchInformationRepository.save(matchinfo));
             matchSaved.matchInformation = matchinformation;
           }
       }
-        await this.setMatchInformationWinner(matchexist.uid);
+    await this.setMatchCompetitor(matchDto, matchSaved)
+    //await this.setMatchInformationWinner(matchexist.uid);
+    
+     return matchSaved;
+    }
 
-        return matchSaved;
+    /**
+    * Set the players/teams for the match.
+    *
+    * @param MatchDto the match dto information
+    * @param number matchUid of the match to set up
+    * @param double scoreA Score of A
+    * @param double scoreB Score of B
+    * @returns {Elo}
+    */
+    async setMatchCompetitor(matchDto: MatchDto, match: Match){
+
+        //this means the competitors belong to an already created team
+        if(matchDto.searchByTeam){
+            await this._matchCompetitor.save({teamUid: matchDto.teamOne[0], matchUid: match.uid});
+            await this._matchCompetitor.save({teamUid: matchDto.teamOne[0], matchUid: match.uid});
+        }else{
+            switch(matchDto.competitorType){
+                case CompetitorTypeEnum.OneVsOne:
+                case CompetitorTypeEnum.TwoVsTwo:
+                case CompetitorTypeEnum.ThreeVsThree:
+                case CompetitorTypeEnum.FourVsFour: 
+                case CompetitorTypeEnum.FreeForAll:
+                    //create teams to group the players, this teams are only visible by the system.
+                    //TODO: search for existing player teams to avoid creating another team with the same player(s)
+                    const firstTeam = await this._teamRepository.save({name: new Date().getTime().toString(), searchable: false});
+                    const secondTeam = await this._teamRepository.save({name: new Date().getTime().toString(), searchable: false});
+                   
+                    //add the players selected from the client to the corresponding team. either team is fine
+                    //we just need a teamId
+                    matchDto.teamOne.forEach(async (playerUid) =>{
+                      await this._teamPlayerRepository.save({teamUid: firstTeam.uid, playerUid: playerUid});
+                    });
+
+                    matchDto.teamTwo.forEach(async (playerUid) =>{
+                        await this._teamPlayerRepository.save({teamUid: secondTeam.uid, playerUid: playerUid});
+                    });
+                
+                   //save the match competetitors
+                   await this._matchCompetitor.save({team: firstTeam, match: match});
+                   await this._matchCompetitor.save({team: secondTeam, match: match});
+                 break;  
+            }
+            //create teams for the players id 
+        }
     }
 
     async setMatchInformationWinner(matchUid: number){
@@ -142,7 +196,7 @@ export class MatchService implements IMatchService {
 
     async getMatchById(uid: number): Promise<Match | undefined> {
         console.log(uid);
-        let match = await this._matchRepository.findOne(uid, {relations: ['matchInformation']});
+        let match = await this._matchRepository.findOne(uid, {relations: ['matchInformation', 'matchCompetitor']});
         return match;
     }
 

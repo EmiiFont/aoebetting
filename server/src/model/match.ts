@@ -5,8 +5,9 @@ export interface MatchDto{
     uid: number;
     title: string;
     bestOf: number;
-    competitorOneUid: number;
-    competitorTwoUid: number;
+    searchByTeam: boolean;
+    teamOne: number[];
+    teamTwo: number[];
     competitorType: CompetitorTypeEnum;
 }
 

@@ -4,7 +4,6 @@ import Match from '../components/match/match';
 function Admin(){
       return (
         <Match></Match>
-        
     );
 }
 
