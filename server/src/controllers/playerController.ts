@@ -27,6 +27,7 @@ export class PlayerController {
         const count = req.query.count != undefined ? parseInt(req.query.count.toString()) : 10;
         const search = req.query.search != undefined ? req.query.search.toString() : "";
         
+        console.log(search);
         let result = await this._playerService.getPlayes(page, count, search);
      
         res.send(result);

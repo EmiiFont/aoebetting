@@ -1,9 +1,10 @@
 import { AnyARecord } from 'dns';
-import React, { FormEvent, useState } from 'react';
+import React, { FormEvent, useEffect, useState } from 'react';
 import AdminMenu from '../../components/adminMenu';
 import MatchInformation from '../../components/match/matchInformation';
 import postData from '../../helpers/postHelper';
 import useFetch from '../../hooks/useFetch';
+import Async from 'react-select/async'
 
 export interface MatchInformation {
     lastUpdate:     Date;
@@ -37,10 +38,10 @@ export enum CompetitorTypeEnum{
 }
 
 export default function CreateMatch(props: any){
-    const defaultMatchObj = {
+    const defaultMatchObj: MatchResponse = {
         title: '',
         bestOf: 1,
-        teamOne: [0],
+        teamOne: ["0"],
         teamTwo: [],
         competitorType: "OneVsOne",
         Started: new Date(),
@@ -49,15 +50,17 @@ export default function CreateMatch(props: any){
         lastUpdate: new Date(),
         matchInformation: []
     }
-    let [matchForm, setMatchForm] = useState<MatchResponse>(Object.entries(props.match.params).length !== 0 ? props.match.params : defaultMatchObj);
+    let [matchForm, setMatchForm] = useState<MatchResponse>(Object.entries(props.match.params).length !== 0 ? 
+    props.match.params : defaultMatchObj);
 
     const onChangeHandler = (e: any) => {
-        setMatchForm({...matchForm, [e.target.name]: e.target.value});
-
-        if(matchForm.competitorType == "FourVsFour"){
-            setMatchForm({...matchForm, teamOne: ["0","1","2","3"]});
+        if(e.target.value == "FourVsFour"){
+            setMatchForm({...matchForm, [e.target.name]: e.target.value, teamOne: ["","","",""],
+            teamTwo: ["","","",""]});
+        }else{
+            setMatchForm({...matchForm, [e.target.name]: e.target.value, teamOne: [""],
+            teamTwo: [""]});
         }
-        console.log(matchForm);
     }
 
     const onTeamOneChangeHandler =(idx: any) => (e: any) => {
@@ -89,6 +92,29 @@ export default function CreateMatch(props: any){
             competitorOpt.push({value: item, label: item});
         }
     }
+
+    const colourOptions = [
+        { value: 'ocean', label: 'Ocean', color: '#00B8D9', isFixed: true },
+        { value: 'blue', label: 'Blue', color: '#0052CC', isDisabled: true },
+        { value: 'purple', label: 'Purple', color: '#5243AA' },
+        { value: 'red', label: 'Red', color: '#FF5630', isFixed: true },
+        { value: 'orange', label: 'Orange', color: '#FF8B00' },
+        { value: 'yellow', label: 'Yellow', color: '#FFC400' },
+        { value: 'green', label: 'Green', color: '#36B37E' },
+        { value: 'forest', label: 'Forest', color: '#00875A' },
+        { value: 'slate', label: 'Slate', color: '#253858' },
+        { value: 'silver', label: 'Silver', color: '#666666' },
+      ];
+
+      const filterColors = (inputValue: any) => {
+        return inputValue.forEach((element: any) => {
+            return {value: element.name, label: element.name};
+        })
+      };
+      
+      const promiseOptions = (inputValue: any) =>
+        fetch(`http://localhost:4000/player?search=${inputValue}`).then(v => v.json()).then(b => b.data);
+    
 
     return(
         <div className="w-full mx-auto pt-10">
@@ -127,7 +153,7 @@ export default function CreateMatch(props: any){
                                             Match Type
                                         </label>
                                         <div className="relative">
-                                            <select onChange={onChangeHandler} name="competitorType" className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
+                                            <select onChange={onChangeHandler} value={matchForm.competitorType} name="competitorType" className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
                                                 {competitorOpt.map((c) =>
                                                  <option key={c.value} value={c.value}>{c.label}</option>
                                                 )}
@@ -182,7 +208,12 @@ export default function CreateMatch(props: any){
                                         </div>
                                         </div> */}
                                         <div className="w-full md:w-1/2 px-3">
-                                        
+                                        {/* <Select options={options} /> */}
+                                        <Async defaultOptions 
+                                        cacheOptions
+                                        loadOptions={promiseOptions}
+                                         getOptionLabel={e => e.name}
+                                         getOptionValue={e => e.uid} />
                                         </div>
                                     </div>
                                     <div className="flex flex-wrap -mx-3 mb-2">

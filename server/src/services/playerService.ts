@@ -29,11 +29,12 @@ export class PlayerService implements IPlayerService{
     }
 
     async getPlayes(page: number, count: number, search: string): Promise<Pagination<Player>> {
-        const take = count || 10;
+        let take = count || 10;
         let skip = page || 0;
       
         if(search.length > 0){
            skip = 0;
+           take = 1;
         }
         const [result, total] = await this._playerRepository.findAndCount(
          {
