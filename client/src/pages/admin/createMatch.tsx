@@ -87,24 +87,19 @@ export default function CreateMatch(props: any){
       };
       
     let competitorOpt = [];
-      for (let item in CompetitorTypeEnum) {
+    for (let item in CompetitorTypeEnum) {
         if (isNaN(Number(item))) {
             competitorOpt.push({value: item, label: item});
         }
     }
+    let bestOfOpt = [];
+    for (let i=0; i<23; i++) {
+        if (i % 2 > 0) {
+            bestOfOpt.push(i);
+        }
+    }
 
-    const colourOptions = [
-        { value: 'ocean', label: 'Ocean', color: '#00B8D9', isFixed: true },
-        { value: 'blue', label: 'Blue', color: '#0052CC', isDisabled: true },
-        { value: 'purple', label: 'Purple', color: '#5243AA' },
-        { value: 'red', label: 'Red', color: '#FF5630', isFixed: true },
-        { value: 'orange', label: 'Orange', color: '#FF8B00' },
-        { value: 'yellow', label: 'Yellow', color: '#FFC400' },
-        { value: 'green', label: 'Green', color: '#36B37E' },
-        { value: 'forest', label: 'Forest', color: '#00875A' },
-        { value: 'slate', label: 'Slate', color: '#253858' },
-        { value: 'silver', label: 'Silver', color: '#666666' },
-      ];
+      const defaultd = {uid: "6", name: "Nicov"};
 
       const filterColors = (inputValue: any) => {
         return inputValue.forEach((element: any) => {
@@ -141,12 +136,12 @@ export default function CreateMatch(props: any){
                                         <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
                                             Title
                                         </label>
-                                        <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                                        <input className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
                                         name="title"
                                         onChange={onChangeHandler}
                                         value={matchForm.title}
                                         id="grid-first-name" type="text" placeholder="Jane"/>
-                                        <p className="text-red-500 text-xs italic">Please fill out this field.</p>
+                                        {/* <p className="text-red-500 text-xs italic">Please fill out this field.</p> */}
                                         </div>
                                         <div className="w-full md:w-1/2 px-3 mb-4">
                                         <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
@@ -169,19 +164,19 @@ export default function CreateMatch(props: any){
                                         </label>
                                         <div className="relative">
                                             <select className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
-                                            <option>3</option>
-                                            <option>5</option>
-                                            <option>7</option>
-                                            <option>9</option>
-                                            <option>11</option>
+                                            {bestOfOpt.map((v)=>
+                                                 <option value={v}>{v}</option>
+                                            )}
                                             </select>
                                             <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                                             <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
                                             </div>
                                         </div>
                                         </div>
+                                        <div className="w-full md:w-1/2 px-3">
+                                         <div className="flex flex-row">
                                         {matchForm.teamOne.map((v, idx)=>
-                                          <div key={idx} className="w-full md:w-1/2 px-3">
+                                        <div key={idx} className="flex">
                                           <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
                                               Player {idx + 1}
                                           </label>
@@ -195,6 +190,8 @@ export default function CreateMatch(props: any){
                                           </div>
                                           </div>
                                         )}
+                                        </div>
+                                        </div>
                                         {/* <div className="w-full md:w-1/2 px-3">
                                         <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
                                             Player 2
@@ -211,9 +208,11 @@ export default function CreateMatch(props: any){
                                         {/* <Select options={options} /> */}
                                         <Async defaultOptions 
                                         cacheOptions
+                                        isClearable
+                                        defaultValue={defaultd}
                                         loadOptions={promiseOptions}
-                                         getOptionLabel={e => e.name}
-                                         getOptionValue={e => e.uid} />
+                                        getOptionLabel={e => e.name}
+                                        getOptionValue={e => e.uid} />
                                         </div>
                                     </div>
                                     <div className="flex flex-wrap -mx-3 mb-2">
@@ -235,7 +234,7 @@ export default function CreateMatch(props: any){
                                             <div className="block uppercase tracking-wide text-gray-700 text-xs font-bold ml-2">Automatic retrieval update</div>
                                         </div>
                                     </div>
-                                    <button type="submit">dale</button>
+                                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="submit">Save</button>
                                   </div>
                                 </form>
                                  </div>
