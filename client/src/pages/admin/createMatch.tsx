@@ -4,7 +4,7 @@ import AdminMenu from '../../components/adminMenu';
 import MatchInformation from '../../components/match/matchInformation';
 import postData from '../../helpers/postHelper';
 import useFetch from '../../hooks/useFetch';
-import Async from 'react-select/async'
+import Select from 'react-select';
 
 export interface MatchInformation {
     lastUpdate:     Date;
@@ -53,13 +53,38 @@ export default function CreateMatch(props: any){
     let [matchForm, setMatchForm] = useState<MatchResponse>(Object.entries(props.match.params).length !== 0 ? 
     props.match.params : defaultMatchObj);
 
+    const res = useFetch(`http://localhost:4000/player?`, {});
+  
+    if (!res.response) {
+        return <div>Loading...</div>
+    }
+    const players = res.response.data.map((d: any) => ({label: d.name, value: d.uid}));
+    
+    let playersCount = 0;
     const onChangeHandler = (e: any) => {
-        if(e.target.value == "FourVsFour"){
-            setMatchForm({...matchForm, [e.target.name]: e.target.value, teamOne: ["","","",""],
-            teamTwo: ["","","",""]});
+        let teamVal = [];
+        let compEnum: CompetitorTypeEnum = CompetitorTypeEnum[e.target.value as keyof typeof CompetitorTypeEnum]
+        switch(compEnum){
+            case CompetitorTypeEnum.OneVsOne:
+                teamVal = [""];
+            break;
+            case CompetitorTypeEnum.TwoVsTwo:
+                teamVal = ["",""];
+            break;
+            case CompetitorTypeEnum.ThreeVsThree:
+                teamVal = ["","",""];
+            break;
+            case CompetitorTypeEnum.FourVsFour:
+            case CompetitorTypeEnum.FreeForAll:
+                teamVal = ["","","",""];
+            break;    
+        }
+        if(compEnum !== CompetitorTypeEnum.FreeForAll){
+            setMatchForm({...matchForm, [e.target.name]: e.target.value, teamOne: teamVal,
+            teamTwo: teamVal});
         }else{
-            setMatchForm({...matchForm, [e.target.name]: e.target.value, teamOne: [""],
-            teamTwo: [""]});
+            setMatchForm({...matchForm, [e.target.name]: e.target.value, teamOne: teamVal,
+            teamTwo: teamVal});
         }
     }
 
@@ -72,11 +97,16 @@ export default function CreateMatch(props: any){
     }
 
     const onTeamTwoChangeHandler =(idx: any) => (e: any) => {
-        const players = matchForm.teamTwo.map((player, sidx) => {
+        const current: any = matchForm;
+        const players = current[e.target.name].map((player: any, sidx: any) => {
             if (idx !== sidx) return player;
             return e.target.value;
         });
+        
+        if(players.length === 0) players.push(e.target.value);
+
         setMatchForm({...matchForm, [e.target.name]: players});
+        console.log(matchForm);
     }
     
     const submitForm = async (evt: FormEvent<HTMLFormElement>) => {
@@ -98,18 +128,6 @@ export default function CreateMatch(props: any){
             bestOfOpt.push(i);
         }
     }
-
-      const defaultd = {uid: "6", name: "Nicov"};
-
-      const filterColors = (inputValue: any) => {
-        return inputValue.forEach((element: any) => {
-            return {value: element.name, label: element.name};
-        })
-      };
-      
-      const promiseOptions = (inputValue: any) =>
-        fetch(`http://localhost:4000/player?search=${inputValue}`).then(v => v.json()).then(b => b.data);
-    
 
     return(
         <div className="w-full mx-auto pt-10">
@@ -173,25 +191,29 @@ export default function CreateMatch(props: any){
                                             </div>
                                         </div>
                                         </div>
-                                        <div className="w-full md:w-1/2 px-3">
-                                         <div className="flex flex-row">
+                                    <div className="w-full md:w-1/2 px-3">
+                                      <div className="flex flex-col">
                                         {matchForm.teamOne.map((v, idx)=>
-                                        <div key={idx} className="flex">
+                                        <div key={idx} className="flex-1">
                                           <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-                                              Player {idx + 1}
+                                              Player {playersCount += 1}
                                           </label>
                                           <div className="relative">
-                                              <input className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
-                                              name="teamOne"
-                                              placeholder={idx + "1"}
-                                              value={v}
-                                              onChange={onTeamOneChangeHandler(idx)}
-                                              id="grid-first-name" type="text" />
+                                            <select onChange={onTeamTwoChangeHandler(idx)} name="teamOne" className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
+                                                {players.map((v: any)=>
+                                                    <option value={v.value}>{v.label}</option>
+                                                )}
+                                                </select>
+                                            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                            <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                                         </div>
                                           </div>
                                           </div>
                                         )}
                                         </div>
-                                        </div>
+
+                                   
+                                    </div>
                                         {/* <div className="w-full md:w-1/2 px-3">
                                         <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
                                             Player 2
@@ -206,13 +228,33 @@ export default function CreateMatch(props: any){
                                         </div> */}
                                         <div className="w-full md:w-1/2 px-3">
                                         {/* <Select options={options} /> */}
-                                        <Async defaultOptions 
+                                        {/* <Select defaultOptions 
                                         cacheOptions
                                         isClearable
-                                        defaultValue={defaultd}
-                                        loadOptions={promiseOptions}
-                                        getOptionLabel={e => e.name}
-                                        getOptionValue={e => e.uid} />
+                                        onChange={onTeamTwoChangeHandler}
+                                        options={aquaticCreatures}
+                                        getOptionLabel={e => e.label}
+                                        getOptionValue={e => e.value} /> */}
+
+                                    <div className="flex flex-col">
+                                        {matchForm.teamTwo.map((v, idx)=>
+                                        <div key={idx} className="flex-1">
+                                          <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                                              Player {playersCount += 1}
+                                          </label>
+                                          <div className="relative">
+                                            <select onChange={onTeamTwoChangeHandler(idx)} name="teamTwo" className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
+                                                {players.map((v: any)=>
+                                                    <option value={v.value}>{v.label}</option>
+                                                )}
+                                                </select>
+                                            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                            <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                                         </div>
+                                          </div>
+                                          </div>
+                                        )}
+                                    </div>
                                         </div>
                                     </div>
                                     <div className="flex flex-wrap -mx-3 mb-2">
