@@ -27,7 +27,7 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Build project
-        run: npm run build
+        run: npm build
 
       # Runs a set of commands using the runners shell
       - name: Run Test
