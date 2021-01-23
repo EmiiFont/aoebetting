@@ -1,5 +1,7 @@
 # aoebetting
 
+![CI](https://github.com/EmiiFont/aoebetting/workflows/CI/badge.svg)
+
 - *Server directory structure*
 - package.json  
 - tsconfig.json typescript configuration file
