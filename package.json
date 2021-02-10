@@ -4,7 +4,7 @@
   "description": "betting platform for age of empire games",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "dev": "concurrently \"cd server && npm run dev\" \"cd client && npm start\" "
   },
   "keywords": [

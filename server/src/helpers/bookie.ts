@@ -1,88 +1,92 @@
-import { OddsConverter } from './oddsConverter';
-import {BetDTO, BetTypeEnum, EventsOdd} from '../model/betDto'
+import { OddsConverter } from './oddsConverter'
+import { BetDTO, BetTypeEnum, EventsOdd } from '../model/betDto'
 
 export class Bookie {
-   
-    //the fee charged by the bookmaker
-    private VIGORISH: number = 0.15;
-    //initial amount for the starting probabilities 
-    private INITIAL_PROB_WEIGHT: number = 50;
-   
-    constructor() {
-    }
-    
-    public async setOdds(bets: Array<BetDTO>, eventOdds: Array<EventsOdd>): Promise<Array<EventsOdd>>
-    {
-        if (eventOdds !== undefined)
-        {
-            let event1 = eventOdds[0].odd;
-            let event2 = eventOdds[1].odd;
+  // the fee charged by the bookmaker
+  private VIGORISH: number = 0.15
+  // initial amount for the starting probabilities
+  private INITIAL_PROB_WEIGHT: number = 50
 
-            let event1HouseStake = (event1 / 100) * this.INITIAL_PROB_WEIGHT;
-            let event2HouseStake = (event2 / 100) * this.INITIAL_PROB_WEIGHT;
-            
-            let stubBets: BetDTO[] = [];
+  public async setOdds(bets: BetDTO[], eventOdds: EventsOdd[]): Promise<EventsOdd[]> {
+    if (eventOdds !== undefined) {
+      const event1 = eventOdds[0].odd
+      const event2 = eventOdds[1].odd
 
-            stubBets.push({eventId: 1, stake: event1HouseStake, odd: event1, created: new Date(), betType: BetTypeEnum.MoneyLine});
-            stubBets.push({eventId: 2, stake: event2HouseStake, odd: event2, created: new Date(), betType: BetTypeEnum.MoneyLine});
-            
-            bets = stubBets.concat(bets);
-        }
+      const event1HouseStake = (event1 / 100) * this.INITIAL_PROB_WEIGHT
+      const event2HouseStake = (event2 / 100) * this.INITIAL_PROB_WEIGHT
 
-        let probs = await this.balanceProbFromBets(bets);
+      const stubBets: BetDTO[] = []
 
-        let impliedOdds: Array<EventsOdd>=[];
-        let numOutcomes = probs.length;
+      stubBets.push({
+        eventId: 1,
+        stake: event1HouseStake,
+        odd: event1,
+        created: new Date(),
+        betType: BetTypeEnum.MoneyLine,
+      })
+      stubBets.push({
+        eventId: 2,
+        stake: event2HouseStake,
+        odd: event2,
+        created: new Date(),
+        betType: BetTypeEnum.MoneyLine,
+      })
 
-        for (let k in probs)
-        {
-            let p = probs[k].odd + this.VIGORISH / numOutcomes;
-
-            impliedOdds.push({eventId:  probs[k].eventId, odd: OddsConverter.fromProbability(p).americanOdds});
-        }
-
-        return impliedOdds;
+      bets = stubBets.concat(bets)
     }
 
-    public async balanceProbFromBets(bets: Array<BetDTO>): Promise<Array<EventsOdd>>
-    {
-        //todo: this can be improved saving the last calculated value in cache or database
-        
-        let total = 0; 
-        let outcomeTotals: Array<EventsOdd> = [];
+    const probs = await this.balanceProbFromBets(bets)
 
-        bets.forEach(function(betTuple)
-        {
-            let outcome = betTuple.eventId;
-            let amount = betTuple.stake;
-            
-            // increment total bet and outcome specific amount
-            total += amount;
-            
-            let existingOutcome = outcomeTotals.find(v => v.eventId == outcome);
-           
-            if( existingOutcome != undefined){
-                existingOutcome.odd = existingOutcome.odd + amount || amount;
-            }else{
-                outcomeTotals.push({eventId: outcome ?? 0, odd: amount });
-            }
+    const impliedOdds: EventsOdd[] = []
+    const numOutcomes = probs.length
 
-        });
-        
-        //stabilize amounts based on the average of bets amount
-        outcomeTotals.forEach(b => { 
-            b.odd /= total;
-        })
+    for (const prob of probs) {
+      const p = prob.odd + this.VIGORISH / numOutcomes
 
-        return outcomeTotals;
+      impliedOdds.push({
+        eventId: prob.eventId,
+        odd: OddsConverter.fromProbability(p).americanOdds,
+      })
     }
 
-    public getBetEarnings(bet: BetDTO, eventIdWinner: number): BetDTO
-    {
-           if(bet.eventId == eventIdWinner) {
-                bet.profit = (bet.stake * OddsConverter.fromAmerican(bet.odd ?? 0).decimalOdds) - bet.stake;
-                bet.total = bet.stake + bet.profit;
-             }
-        return bet;
+    return impliedOdds
+  }
+
+  public async balanceProbFromBets(bets: BetDTO[]): Promise<EventsOdd[]> {
+    // todo: this can be improved saving the last calculated value in cache or database
+
+    let total = 0
+    const outcomeTotals: EventsOdd[] = []
+
+    bets.forEach((betTuple) => {
+      const outcome = betTuple.eventId
+      const amount = betTuple.stake
+
+      // increment total bet and outcome specific amount
+      total += amount
+
+      const existingOutcome = outcomeTotals.find((v) => v.eventId === outcome)
+
+      if (existingOutcome !== undefined) {
+        existingOutcome.odd = existingOutcome.odd + amount || amount
+      } else {
+        outcomeTotals.push({ eventId: outcome ?? 0, odd: amount })
+      }
+    })
+
+    // stabilize amounts based on the average of bets amount
+    outcomeTotals.forEach((b) => {
+      b.odd /= total
+    })
+
+    return outcomeTotals
+  }
+
+  public getBetEarnings(bet: BetDTO, eventIdWinner: number): BetDTO {
+    if (bet.eventId === eventIdWinner) {
+      bet.profit = bet.stake * OddsConverter.fromAmerican(bet.odd ?? 0).decimalOdds - bet.stake
+      bet.total = bet.stake + bet.profit
     }
+    return bet
+  }
 }

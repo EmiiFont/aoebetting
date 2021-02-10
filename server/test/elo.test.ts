@@ -4,7 +4,7 @@ import { AdvancedConsoleLogger } from "typeorm";
 test('ELO should be greater than starting elo when winning a match', async () => {
 
     const playerAElo = 1100;
-    const playerBElo = 1121;
+    const playerBElo = 1122;
 
     let elo = new Elo(playerAElo, playerBElo, EloResult.WIN, EloResult.LOOSE);
     
@@ -16,7 +16,7 @@ test('ELO should be greater than starting elo when winning a match', async () =>
 
   test('ELO should be lower than starting elo when losing a match', async () => {
 
-    const playerAElo = 1100;
+    const playerAElo = 0;
     const playerBElo = 1121;
 
     let elo = new Elo(playerAElo, playerBElo, EloResult.LOOSE, EloResult.WIN);
