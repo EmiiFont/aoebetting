@@ -1,7 +1,7 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
-import { Bet } from './Bet';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
+import { Bet } from "./Bet";
 
-/* These can be: 
+/* These can be:
  * - Win Bet/Moneyline Wager
  * - Point Spreads
  * - Handicap
@@ -13,18 +13,18 @@ import { Bet } from './Bet';
 
 @Entity()
 export class BetType {
+  @PrimaryGeneratedColumn()
+  uid: number;
 
-    @PrimaryGeneratedColumn()
-    uid: number;
+  @Column({
+    type: "varchar",
+    length: 100,
+  })
+  name: string;
 
-    @Column({ 
-        type: "varchar",
-        length: 100 })
-    name: string;
+  @Column({ type: "varchar" })
+  rules: string;
 
-    @Column({ type: "varchar"})
-    rules: string;
-
-    @OneToMany(() => Bet, bet => bet.type)
-    bets: Bet[];
+  @OneToMany(() => Bet, (bet) => bet.type)
+  bets: Bet[];
 }

@@ -1,24 +1,23 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany } from 'typeorm';
-import { Match } from './Match';
-import { Player } from './Player';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany } from "typeorm";
+import { Match } from "./Match";
+import { Player } from "./Player";
 
-export enum CompetitorTypeEnum{
-    SinglePlayer, 
-    Team
+export enum CompetitorTypeEnum {
+  SinglePlayer,
+  Team,
 }
 
 @Entity()
 export class Competitor {
-   
-    @PrimaryGeneratedColumn()
-    uid: number;
+  @PrimaryGeneratedColumn()
+  uid: number;
 
-    @ManyToMany(() => Player, player => player.uid)
-    players: Player[];
+  @ManyToMany(() => Player, (player) => player.uid)
+  players: Player[];
 
-    @Column({nullable: true})
-    teamUid: number;
+  @Column({ nullable: true })
+  teamUid: number;
 
-    @Column()
-    competitorType: CompetitorTypeEnum;
+  @Column()
+  competitorType: CompetitorTypeEnum;
 }

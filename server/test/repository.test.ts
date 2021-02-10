@@ -1,34 +1,33 @@
-import faker from 'faker';
+import faker from "faker";
 
-import { PostgresDBConnection } from '../src/database/PostgresDBConnection';
-import { PlayerDto } from '../src/model/playerDto';
-import { PlayerRepository } from '../src/repository/PlayerRepository';
+import { PostgresDBConnection } from "../src/database/PostgresDBConnection";
+import { PlayerDto } from "../src/model/playerDto";
+import { PlayerRepository } from "../src/repository/PlayerRepository";
 
-
-test('Player should be added to the DB via its repository', async () => {
-
-     const dbConnection =  new PostgresDBConnection();
-     await dbConnection.setUpConnection().then( async connection => {
-            
+test("Player should be added to the DB via its repository", async () => {
+  const dbConnection = new PostgresDBConnection();
+  await dbConnection
+    .setUpConnection()
+    .then(async (connection) => {
       const playerRepository = connection.getCustomRepository(PlayerRepository);
 
-      let aPlayer = new PlayerDto();
-      aPlayer.steamId = faker.random.number({ min: 10000000000000000, max: 99999999999999999}).toString();
-      aPlayer.name = `${faker.name.firstName() + ' ' + faker.name.lastName()}`;
-      aPlayer.steamName = `${faker.internet.userName() + faker.random.number({ min: 100, max: 999})}`
+      const aPlayer = new PlayerDto();
+      aPlayer.steamId = faker.random.number({ min: 10000000000000000, max: 99999999999999999 }).toString();
+      aPlayer.name = `${faker.name.firstName() + " " + faker.name.lastName()}`;
+      aPlayer.steamName = `${faker.internet.userName() + faker.random.number({ min: 100, max: 999 })}`;
       aPlayer.country = faker.address.countryCode();
       aPlayer.clan = faker.internet.userName();
-      aPlayer.aoe2NetRating = faker.random.number({ min: 1000, max: 3000});
-      aPlayer.aoeEloComRating = faker.random.number({ min: 1000, max: 3000});
-      aPlayer.rating = faker.random.number({ min: 1000, max: 3000});
+      aPlayer.aoe2NetRating = faker.random.number({ min: 1000, max: 3000 });
+      aPlayer.aoeEloComRating = faker.random.number({ min: 1000, max: 3000 });
+      aPlayer.rating = faker.random.number({ min: 1000, max: 3000 });
       aPlayer.averageRating = (aPlayer.rating + aPlayer.aoe2NetRating + aPlayer.aoeEloComRating) / 3;
-      aPlayer.gamesPlayed = faker.random.number({ min: 0, max: 3000});
-      aPlayer.gamesWon = faker.random.number({ min: 0, max: 3000});
-      aPlayer.gamesDropped = faker.random.number({ min: 0, max: 3000});
-      aPlayer.winStreak = faker.random.number({ min: 0, max: 3000});
-        
+      aPlayer.gamesPlayed = faker.random.number({ min: 0, max: 3000 });
+      aPlayer.gamesWon = faker.random.number({ min: 0, max: 3000 });
+      aPlayer.gamesDropped = faker.random.number({ min: 0, max: 3000 });
+      aPlayer.winStreak = faker.random.number({ min: 0, max: 3000 });
+
       const savedPlayer = await playerRepository.save(aPlayer);
-      console.log (`Player saved into DB: ${savedPlayer.name} \n
+      console.log(`Player saved into DB: ${savedPlayer.name} \n
       Steam ID: ${savedPlayer.steamId} \n
       Player Name: ${savedPlayer.name} \n
       Steam Name: ${savedPlayer.steamName} \n
@@ -60,7 +59,6 @@ test('Player should be added to the DB via its repository', async () => {
       expect(playerFromDb?.winStreak).toBe(playerFromDb?.winStreak.toString());
 
       connection.close();
-
-     }).catch(error => console.log(error));
-    
+    })
+    .catch((error) => console.log(error));
 });
