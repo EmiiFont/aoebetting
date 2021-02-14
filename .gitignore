@@ -1,17 +1,11 @@
-/dist
-/node_modules
+dist
+node_modules
 .env
-server/dist
-server/dist/src
-server/dist/src/entity
-server/node_modules
-client/node_modules
-server/package-lock.json
 
 # dependencies
-/node_modules
 /.pnp
 .pnp.js
+.vscode
 
 # testing
 /coverage
