@@ -5,22 +5,10 @@ import { join } from "path";
 import * as _ from "lodash";
 import { container, IContextProvider } from "./container";
 import { TYPES } from "./model/types";
-import { betResolver } from "./resolvers/betResolver";
 import matchResolver from "./resolvers/matchResolver";
 import playerResolver from "./resolvers/playerResolver";
 import * as serviceAccount from "../firebase-config.json";
 import * as admin from "firebase-admin";
-
-const books = [
-  {
-    title: "Harry Potter and the Sorcerer's stone",
-    author: "J.K. Rowling",
-  },
-  {
-    title: "Jurassic Park",
-    author: "Michael Crichton",
-  },
-];
 
 class App {
   public app: Application;
@@ -53,7 +41,7 @@ class App {
     });
   }
 
-  initGraphql() {
+  initGraphql(): void {
     const schema = loadSchemaSync(join(__dirname, "./schemas/schema.graphql"), {
       loaders: [new GraphQLFileLoader()],
     });
@@ -86,7 +74,7 @@ class App {
     return result.uid;
   }
 
-  public listen() {
+  public listen(): void {
     this.app.listen(this.port, () => {
       console.log(`App listening on the http://localhost:${this.port}/graphql to run queries!`);
     });
