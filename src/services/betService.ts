@@ -1,19 +1,21 @@
-import { BetDTO, EventsOdd, BetTypeEnum } from "../model/betDto";
-import { Bookie } from "../helpers/bookie";
+import { injectable } from "inversify";
 import { getRepository } from "typeorm";
 import { Bet } from "../entity/Bet";
-import { User } from "../entity/User";
 import { BetType } from "../entity/BetType";
+import { Match } from "../entity/Match";
 import { UserBet } from "../entity/UserBet";
-import { Match, CompetitorTypeEnum } from "../entity/Match";
+import { Bookie } from "../helpers/bookie";
 import { Elo } from "../helpers/elo";
+import { BetDTO, BetTypeEnum, EventsOdd } from "../model/betDto";
 
 export interface IBetService {
   setUserbet(userBet: BetDTO, betUid: number): Promise<boolean>;
   setSystemBet(bet: BetDTO, matchId: number): Promise<Array<Bet>>;
   getByMatch(matchUid: number): Promise<Array<Bet>>;
+  getUserBets(userUid: number): Promise<Array<Bet>>;
 }
 
+@injectable()
 export class BetService implements IBetService {
   private _bookie: Bookie;
   private _userBetRepository = getRepository(UserBet);
@@ -36,7 +38,7 @@ export class BetService implements IBetService {
     //      //TODO: get team from team table
     // }
 
-    //TODO: this is where we can use our stimation or elo calculation for specific cases.
+    //TODO: this is where we can use our estimation or elo calculation for specific cases.
     const probFromElo = Elo.predictResult(firstPlayerElo, secondPlayerElo);
 
     const matchOdds: Array<EventsOdd> = [];
@@ -91,15 +93,15 @@ export class BetService implements IBetService {
       userBet.odd = oddForPickedSide?.odd;
 
       //TODO: update new balanced odds for the events
-      const newBet = this._userBetRepository.create({
-        stake: userBet.stake,
-        bettor: userBet.user,
-        datePlaced: new Date(),
-        odd: userBet.odd,
-        bet: bet,
-      });
+      // const newBet = this._userBetRepository.create({
+      //   stake: userBet.stake,
+      //   bettor: userBet.user,
+      //   datePlaced: new Date(),
+      //   odd: userBet.odd,
+      //   bet: bet,
+      // });
 
-      await this._userBetRepository.save(newBet);
+      // await this._userBetRepository.save(newBet);
 
       return true;
     }
@@ -108,7 +110,7 @@ export class BetService implements IBetService {
     return false;
   }
 
-  async getUserBets(userUid: number): Promise<Array<BetDTO>> {
+  async getUserBets(userUid: number): Promise<Array<Bet>> {
     const userBets = await this._betRepository.find({ uid: userUid });
 
     //TODO: get the event id of each bets
@@ -127,8 +129,7 @@ export class BetService implements IBetService {
   async getByMatch(matchUid: number): Promise<Bet[]> {
     const match = await this._matchRepository.findOne(matchUid);
     console.log(match);
-    const matchBets = await this._betRepository.find({ match: match });
 
-    return matchBets;
+    return await this._betRepository.find({ match: match });
   }
 }

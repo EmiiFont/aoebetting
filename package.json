@@ -7,9 +7,9 @@
     "test": "jest",
     "test:coverage": "jest --coverage && open ./coverage/index.html",
     "clean": "rm -rf ./dist/",
-    "start": "npm run build && node ./dist/server.js",
+    "start": "set NODE_ENV=dev && npm run build && node ./dist/src/server.js",
     "lint": "eslint . --ext .ts",
-    "build": "tsc -p . && ncp ./src/schemas ./dist/schemas",
+    "build": "tsc -p . && ncp ./src/schemas ./dist/src/schemas",
     "build:dev": "set NODE_ENV=dev && tsc-watch --onSuccess \"nodemon ./dist/server.js\""
   },
   "author": "",
@@ -28,7 +28,7 @@
     "nodemon": "^2.0.4",
     "prettier": "2.2.1",
     "prettier-eslint": "^12.0.0",
-    "typescript": "^4.1.4"
+    "typescript": "^4.1.5"
   },
   "dependencies": {
     "@types/cheerio": "^0.22.23",
@@ -43,8 +43,10 @@
     "express": "^4.17.1",
     "express-winston": "^4.0.5",
     "faker": "^5.1.0",
+    "firebase-admin": "^9.5.0",
     "graphql": "^15.5.0",
     "graphql-tools": "^7.0.3",
+    "inversify": "^5.0.5",
     "jest": "^26.4.2",
     "lodash": "^4.17.20",
     "pg": "^8.3.3",
@@ -52,6 +54,7 @@
     "ts-jest": "^26.3.0",
     "tsc-watch": "^4.2.9",
     "typeorm": "^0.2.25",
+    "typeorm-naming-strategies": "^2.0.0",
     "winston": "^3.3.3"
   }
 }

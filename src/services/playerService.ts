@@ -1,3 +1,5 @@
+import { injectable } from "inversify";
+import * as _ from "lodash";
 import { getRepository, Like } from "typeorm";
 import { Player } from "../entity/Player";
 import { Team } from "../entity/team";
@@ -11,10 +13,11 @@ export interface IPlayerService {
   updatePlayer(playerDto: PlayerDto): Promise<Player>;
   autoAddPlayers(top: number): Promise<Player[]>;
   getPlayer(id: number): Promise<Player | undefined>;
-  getPlayes(page: number, count: number, search: string): Promise<Pagination<Player>>;
+  getPlayers(page: number, count: number, search: string, sortBy: string): Promise<Pagination<Player>>;
   searchPlayer(name: string): Promise<Player[]>;
 }
 
+@injectable()
 export class PlayerService implements IPlayerService {
   private _teamRepository = getRepository(Team);
   private _playerRepository = getRepository(Player);
@@ -26,19 +29,23 @@ export class PlayerService implements IPlayerService {
     this._tournamentElo = new TournamentEloService();
   }
 
-  async getPlayes(page: number, count: number, search: string): Promise<Pagination<Player>> {
+  async getPlayers(page: number, count: number, search: string, sortBy: string): Promise<Pagination<Player>> {
     let take = count || 10;
     let skip = page || 0;
 
-    if (search.length > 0) {
+    if (!_.isEmpty(search)) {
       skip = 0;
       take = 1;
     }
     const [result, total] = await this._playerRepository.findAndCount({
       where: { name: Like("%" + search + "%") },
-      order: { name: "DESC" },
+      order: sortBy.includes("aoeEloComRating")
+        ? { aoeEloComRating: "DESC" }
+        : sortBy.includes("aoe2NetRating")
+        ? { aoeEloComRating: "DESC" }
+        : { name: "DESC" },
       take: take,
-      skip: skip,
+      skip: skip * take,
     });
 
     return {

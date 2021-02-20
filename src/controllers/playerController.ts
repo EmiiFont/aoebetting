@@ -26,7 +26,7 @@ export class PlayerController {
     const search = req.query.search != undefined ? req.query.search.toString() : "";
 
     console.log(search);
-    const result = await this._playerService.getPlayes(page, count, search);
+    const result = await this._playerService.getPlayers(page, count, search, "");
 
     res.send(result);
   };

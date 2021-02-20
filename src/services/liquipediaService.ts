@@ -86,15 +86,15 @@ export class LiquipediaService implements IliquipediaService {
       const matchObj: ILiquipediMatch = {
         startTime: isLive
           ? undefined
-          : this._parseTime(match.find(".match-filler").find(".match-countdown").find("span > span").text().trim()),
+          : this.parseTime(match.find(".match-filler").find(".match-countdown").find("span > span").text().trim()),
         team1: this.parseTeamSides(match, true),
         team1Score: isLive
-          ? this._parseScore(match.find(".versus").eq(0).text())
-          : this._parseScore(match.find(".versus").eq(0).text()),
+          ? this.parseScore(match.find(".versus").eq(0).text())
+          : this.parseScore(match.find(".versus").eq(0).text()),
         team2: this.parseTeamSides(match, false),
         team2Score: isLive
-          ? this._parseScore(match.find(".versus").eq(0).text(), true)
-          : this._parseScore(match.find(".versus").eq(0).text(), true),
+          ? this.parseScore(match.find(".versus").eq(0).text(), true)
+          : this.parseScore(match.find(".versus").eq(0).text(), true),
         tournament: match.find(".match-filler").find(".match-countdown + div > div > a").eq(0).attr("title") || "",
         tournamentURL: `https://liquipedia.net/ageofempires/${match
           .find(".match-filler")
@@ -108,16 +108,14 @@ export class LiquipediaService implements IliquipediaService {
     return matchArray;
   }
 
-  private _parseScore(scoreString: string, returnTeam2 = false): number {
+  parseScore(scoreString: string, returnTeam2 = false): number {
     console.log(scoreString);
     const scoreSplit = scoreString.split(":");
     const scoreIndex = returnTeam2 ? 1 : 0; // Team 2 value will always be the "right" side number
     return parseInt(scoreSplit[scoreIndex], 10);
   }
 
-  private _parseTime(date: string): string {
-    // Map month name to a number, disabled TSLint to keep months in chrono order
-    /* tslint:disable:object-literal-sort-keys */
+  parseTime(date: string): string {
     console.log(date);
     const monthToNumberMap: any = {
       January: "01",
@@ -133,7 +131,6 @@ export class LiquipediaService implements IliquipediaService {
       November: "11",
       December: "12",
     };
-    /* tslint:enable:object-literal-sort-keys */
 
     /**
      *  Normalizes day & hours values to have leading zeros if they are single-digits
@@ -165,19 +162,17 @@ export class LiquipediaService implements IliquipediaService {
   private parseTeamSides(match: cheerio.Cheerio, isLeft: boolean): string {
     if (isLeft) {
       const teamName = match.find(".team-left .team-template-text").find("a").eq(0).attr("title") || "";
-      return this._trimTeam(teamName === "" ? match.find(".team-left").find("a").eq(0).attr("title") || "" : teamName);
+      return this.trimTeam(teamName === "" ? match.find(".team-left").find("a").eq(0).attr("title") || "" : teamName);
     } else {
       let teamName = match.find(".team-right .team-template-text").find("a").eq(0).attr("title") || "";
       if (teamName === "") {
         const alink = match.find(".team-right").find("a");
         teamName = alink.length > 1 ? alink.eq(1).attr("title") || "" : alink.eq(0).attr("title") || "";
       }
-
-      return this._trimTeam(teamName);
+      return this.trimTeam(teamName);
     }
-    return "";
   }
-  private _trimTeam(teamName: string): string {
+  trimTeam(teamName: string): string {
     return teamName.split("(page does not exist)")[0].trim();
   }
 }

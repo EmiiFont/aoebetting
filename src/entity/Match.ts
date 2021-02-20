@@ -33,7 +33,7 @@ export class Match {
   })
   title: string;
 
-  @Column()
+  @Column({ type: "varchar" })
   competitorType: CompetitorTypeEnum;
 
   @Column({ default: 1 })

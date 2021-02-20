@@ -1,11 +1,11 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
+import { Entity, Column, OneToMany, PrimaryColumn } from "typeorm";
 
 import { UserBet } from "./UserBet";
 
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn()
-  uid: number;
+  @PrimaryColumn()
+  uid: string;
 
   @Column({
     type: "varchar",

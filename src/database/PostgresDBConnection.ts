@@ -1,3 +1,4 @@
+import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 import { BaseDbConnection } from "./BaseDbConnection";
 import { ConnectionOptions } from "typeorm";
 
@@ -24,6 +25,7 @@ class PostgresDBConnection extends BaseDbConnection {
       password: process.env.DB_PASS,
       database: dbconfig.database,
       synchronize: true,
+      namingStrategy: new SnakeNamingStrategy(),
       logging: process.env.NODE_ENV?.trim() == "dev",
       entities: [
         Bet,
@@ -31,12 +33,12 @@ class PostgresDBConnection extends BaseDbConnection {
         User,
         Match,
         MatchInformation,
+        MatchCompetitor,
         Competitor,
         UserBet,
         Player,
         Team,
         TeamPlayer,
-        MatchCompetitor,
       ],
     };
 

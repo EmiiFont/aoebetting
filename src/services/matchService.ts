@@ -1,3 +1,4 @@
+import { injectable } from "inversify";
 import { CompetitorTypeEnum, Match } from "../entity/Match";
 
 import { getRepository } from "typeorm";
@@ -14,8 +15,11 @@ export interface IMatchService {
   getMatches(perPage: number, page: number): Promise<Array<Match>>;
   setMatchStarted(matchUid: number, tryGetApi: boolean): Promise<Match>;
   setMatchFinished(matchUid: number, tryGetApi: boolean): Promise<Match>;
+  getMatchInformationByMatch(matchUid: number): Promise<MatchInformation[] | undefined>;
+  getMatchCompetitorByMatch(uid: number): Promise<MatchCompetitor[] | undefined>;
 }
 
+@injectable()
 export class MatchService implements IMatchService {
   private _matchRepository = getRepository(Match);
   private _matchInformationRepository = getRepository(MatchInformation);
@@ -77,14 +81,14 @@ export class MatchService implements IMatchService {
       //     match.finished = new Date();
       // }
     }
-    this._matchRepository.save(match);
+    await this._matchRepository.save(match);
     //TODO: calculate winners after match is finished.
 
     return match;
   }
 
   async addMatch(matchDto: MatchDto): Promise<Match> {
-    const matchinformation: Array<MatchInformation> = [];
+    const matchInformation: Array<MatchInformation> = [];
 
     const minimumMatchesToPlay = Math.trunc(matchDto.bestOf / 2) + 1;
     let matchSaved;
@@ -92,7 +96,6 @@ export class MatchService implements IMatchService {
     if (matchDto.uid) {
       matchSaved = await this._matchRepository.findOne(matchDto.uid, { relations: ["matchInformation"] });
     }
-    console.log(matchSaved);
     if (matchSaved) {
       matchSaved.title = matchDto.title;
       matchSaved.competitorType = matchDto.competitorType;
@@ -105,20 +108,18 @@ export class MatchService implements IMatchService {
         competitorType: matchDto.competitorType,
         lastUpdate: new Date(),
         bestOf: matchDto.bestOf,
-        matchInformation: matchinformation,
+        matchInformation: matchInformation,
       });
 
       matchSaved = await this._matchRepository.save(matchSaved);
-      console.log("Match Added");
-      console.log(minimumMatchesToPlay);
       for (let i = 1; i <= minimumMatchesToPlay; i++) {
         const matchinfo = this._matchInformationRepository.create({
           lastUpdate: new Date(),
           match: matchSaved,
           winnerUid: 2,
         });
-        matchinformation.push(await this._matchInformationRepository.save(matchinfo));
-        matchSaved.matchInformation = matchinformation;
+        matchInformation.push(await this._matchInformationRepository.save(matchinfo));
+        matchSaved.matchInformation = matchInformation;
       }
     }
     await this.setMatchCompetitor(matchDto, matchSaved);
@@ -147,7 +148,7 @@ export class MatchService implements IMatchService {
         case CompetitorTypeEnum.TwoVsTwo:
         case CompetitorTypeEnum.ThreeVsThree:
         case CompetitorTypeEnum.FourVsFour:
-        case CompetitorTypeEnum.FreeForAll:
+        case CompetitorTypeEnum.FreeForAll: {
           //create teams to group the players, this teams are only visible by the system.
           //TODO: search for existing player teams to avoid creating another team with the same player(s)
           const firstTeam = await this._teamRepository.save({
@@ -161,18 +162,19 @@ export class MatchService implements IMatchService {
 
           //add the players selected from the client to the corresponding team. either team is fine
           //we just need a teamId
-          matchDto.teamOne.forEach(async (playerUid) => {
+          for (const playerUid of matchDto.teamOne) {
             await this._teamPlayerRepository.save({ teamUid: firstTeam.uid, playerUid: playerUid });
-          });
+          }
 
-          matchDto.teamTwo.forEach(async (playerUid) => {
+          for (const playerUid of matchDto.teamTwo) {
             await this._teamPlayerRepository.save({ teamUid: secondTeam.uid, playerUid: playerUid });
-          });
+          }
 
-          //save the match competetitors
+          //save the match competitors
           await this._matchCompetitor.save({ team: firstTeam, match: match });
           await this._matchCompetitor.save({ team: secondTeam, match: match });
           break;
+        }
       }
       //create teams for the players id
     }
@@ -191,8 +193,12 @@ export class MatchService implements IMatchService {
   }
 
   async getMatchById(uid: number): Promise<Match | undefined> {
-    console.log(uid);
-    const match = await this._matchRepository.findOne(uid, { relations: ["matchInformation", "matchCompetitor"] });
-    return match;
+    return await this._matchRepository.findOne(uid, { relations: ["matchInformation", "matchCompetitor"] });
+  }
+  async getMatchInformationByMatch(uid: number): Promise<MatchInformation[] | undefined> {
+    return await this._matchInformationRepository.find({ matchUid: uid });
+  }
+  async getMatchCompetitorByMatch(uid: number): Promise<MatchCompetitor[] | undefined> {
+    return await this._matchCompetitor.find({ matchUid: uid });
   }
 }

@@ -1,18 +1,48 @@
 type Query {
-    books: [Book]
     matches(perPage: Int, page: Int): [Match]
     match(uid: ID!): Match
-    players(perPage: Int, page: Int, name: String): [Player]
+    players(playersFilter: PlayersFilter): [Player]
     player(uid: ID!): [Player]
+    autoAdd(top: Int): [Player]
+    getByMatch(matchUid: ID!): [Bet]
+    getLiquidpediaMatch: LiquidpediaMatchList
 }
 
 type Mutation{
-    addMatch: Boolean
+    addMatch(matchInput: MatchInput): Match
     updatePlayer: Boolean
+    setUserBet: Boolean
+    setSystemBet: [Bet]
 }
-type Book {
-    title: String
-    author: String
+
+type LiquidpediaMatchList {
+    liveGames: [ILiquipediMatch]
+    upcomingGames: [ILiquipediMatch]
+    concludedGames: [ILiquipediMatch]
+}
+
+type ILiquipediMatch {
+    team1: String
+    team1Score: Int
+    team2: String
+    team2Score: Int
+    startTime: String
+    tournament: String
+    tournamentURL: String
+}
+
+enum PlayerSortFields {
+    name
+    aoe2NetRating
+    aoeEloComRating
+    steamId
+}
+
+input PlayersFilter {
+    perPage: Int
+    page: Int
+    name: String
+    sortBy: PlayerSortFields
 }
 
 enum CompetitorType {
@@ -31,9 +61,38 @@ type Match {
     Started: String
     finished: String
     lastUpdate: String
-    # bets: Bet[];
-    #matchCompetitor: MatchCompetitor[];
-    #matchInformation: MatchInformation[];
+    bets: [Bet]
+    matchCompetitor: [MatchCompetitor]
+    matchInformation: [MatchInformation]
+}
+
+type MatchCompetitor {
+    uid: Int
+    matchUid: Int
+    teamUid: Int
+    match: Match
+    #team: Team
+}
+
+type MatchInformation {
+    uid: Int
+    MatchIdFromApi: String
+    Started: String
+    finished: String
+    lastUpdate: String
+    winnerUid: Int
+    match: Match
+    matchUid: Int
+}
+
+input MatchInput {
+    uid: Int
+    title: String
+    bestOf: Int
+    searchByTeam: Boolean
+    teamOne: [Int]
+    teamTwo: [Int]
+    competitorType: CompetitorType
 }
 
 type Player {
@@ -46,9 +105,47 @@ type Player {
     aoe2NetRating: Int
     aoeEloComRating: Int
     rating: Int
-    averageRating: Int
+    averageRating: Float
     gamesPlayed: Int
     gamesWon: Int
     gamesDropped: Int
     winStreak: Int
 }
+
+type Bet {
+    uid: ID!
+    systemOdd: String
+    datePlaced: String
+    typeUid: String
+    type: BetType
+    userBet: [UserBet]
+    #match: Match
+}
+
+type BetType {
+    uid: ID!
+    name: String
+    rules: String
+}
+
+type UserBet {
+    uid: ID
+    stake: Float
+    odd: Float
+    datePlaced: String
+    betUid: String
+    bet: Bet
+    #bettor: User
+}
+
+type User {
+    uid: String
+    firstName: String
+    lastName: String
+    userName: String
+    email: String
+    dateCreated: String
+    lastLogin: String
+}
+
+

@@ -10,6 +10,7 @@ export class Player {
   @Column({
     type: "varchar",
     length: 20,
+    nullable: true,
   })
   steamId: string;
 
@@ -22,6 +23,7 @@ export class Player {
   @Column({
     type: "varchar",
     length: 50,
+    nullable: true,
   })
   steamName: string;
 
@@ -40,11 +42,13 @@ export class Player {
 
   @Column({
     type: "numeric",
+    nullable: true,
   })
   aoe2NetRating: number;
 
   @Column({
     type: "numeric",
+    nullable: true,
   })
   aoeEloComRating: number;
 

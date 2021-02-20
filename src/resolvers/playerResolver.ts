@@ -1,24 +1,34 @@
-import { IResolvers } from 'graphql-tools';
-import { PlayerService } from '../services/playerService'
-import { Player } from '../entity/Player'
+import { IResolvers } from "graphql-tools";
+import { Player } from "../entity/Player";
+import { IContext } from "../model/types";
 
-const matchResolver: IResolvers = {
+const playerResolver: IResolvers = {
   Query: {
-    async players(parent, args): Promise<Player[]> {
-      const { perPage, page, name } = args;
-      const res = await new PlayerService().getPlayes(page, perPage, name)
+    async players(parent, args, context: IContext): Promise<Player[]> {
+      const { playersFilter } = args;
+      console.log(playersFilter);
+      const res = await context.playerService.getPlayers(
+        playersFilter.page,
+        playersFilter.perPage,
+        playersFilter.name || "",
+        playersFilter.sortBy,
+      );
       return res.data;
     },
-    player(parent, args): Promise<Player | undefined> {
-      const {id} = args;
-      return new PlayerService().getPlayer(id);
+    player(parent, args, context: IContext): Promise<Player | undefined> {
+      const { id } = args;
+      return context.playerService.getPlayer(id);
+    },
+    autoAdd(parent, args, context: IContext): Promise<Player[]> {
+      const { top } = args;
+      return context.playerService.autoAddPlayers(top);
     },
   },
-  Mutation:{
-    updatePlayer: async () : Promise<boolean> => {
+  Mutation: {
+    updatePlayer: async (): Promise<boolean> => {
       //new PlayerService().updatePlayer();
       return true;
-    }
-  }
+    },
+  },
 };
-export default matchResolver;
+export default playerResolver;

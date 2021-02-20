@@ -83,7 +83,7 @@ export class Elo {
     return [ea, eb];
   }
 
-  protected _getExpectedScores(ratingA: number, ratingB: number): Array<number> {
+  protected _getExpectedScores(ratingA: number, ratingB: number) {
     const expectedScoreA = 1 / (1 + Math.pow(10, (ratingB - ratingA) / 400));
     const expectedScoreB = 1 / (1 + Math.pow(10, (ratingA - ratingB) / 400));
 

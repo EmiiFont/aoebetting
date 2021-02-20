@@ -1,41 +1,33 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  ManyToOne,
-  JoinColumn,
-  OneToOne,
-  RelationId,
-  OneToMany,
-} from "typeorm";
-import { Competitor } from "./Competitor";
-import { Bet } from "./Bet";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, RelationId } from "typeorm";
 import { Match } from "./Match";
 
-//
 @Entity()
 export class MatchInformation {
   @PrimaryGeneratedColumn()
   uid: number;
 
   @Column({ nullable: true })
-  MatchIdFromApi: string;
+  @Column({ name: "match_id_from_api" })
+  matchIdFromApi: string;
 
   @Column({ nullable: true })
-  Started: Date;
+  started: Date;
 
   @Column({ nullable: true })
   finished: Date;
 
   @Column({ default: new Date() })
+  @Column({ name: "last_update" })
   lastUpdate: Date;
 
   @Column({ nullable: true })
+  @Column({ name: "winner_uid" })
   winnerUid: number;
 
   @ManyToOne(() => Match, (match) => match.matchInformation)
   match: Match;
 
   @RelationId((matchInfo: MatchInformation) => matchInfo.match)
+  @Column({ name: "match_uid" })
   matchUid: number;
 }

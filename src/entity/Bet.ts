@@ -1,18 +1,7 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  ManyToOne,
-  JoinColumn,
-  OneToOne,
-  OneToMany,
-  RelationId,
-} from "typeorm";
-
-import { User } from "./User";
-import { BetType } from "./BetType";
-import { UserBet } from "./UserBet";
-import { Match } from "./Match";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, RelationId } from 'typeorm'
+import { BetType } from './BetType'
+import { Match } from './Match'
+import { UserBet } from './UserBet'
 
 @Entity()
 export class Bet {
