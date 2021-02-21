@@ -12,6 +12,7 @@ export interface ILiquipediMatch {
   team1Score?: number;
   team2: string;
   team2Score?: number;
+  bestOf: number;
   startTime?: string;
   tournament: string;
   tournamentURL: string;
@@ -71,13 +72,13 @@ export class LiquipediaService implements IliquipediaService {
         matchList.upcomingGames = this._parseMatch(matchBox, false);
       } else {
         const matchBox = tables.eq(i);
-        matchList.concludedGames = this._parseMatch(matchBox, false);
+        matchList.concludedGames = this._parseMatch(matchBox, false, true);
       }
     }
     return matchList;
   }
 
-  private _parseMatch(matchSet: cheerio.Cheerio, isLive = false): ILiquipediMatch[] {
+  private _parseMatch(matchSet: cheerio.Cheerio, isLive = false, isConcluded = false): ILiquipediMatch[] {
     const matches = matchSet.find(".infobox_matches_content");
     const matchArray: ILiquipediMatch[] = [];
 
@@ -95,6 +96,7 @@ export class LiquipediaService implements IliquipediaService {
         team2Score: isLive
           ? this.parseScore(match.find(".versus").eq(0).text(), true)
           : this.parseScore(match.find(".versus").eq(0).text(), true),
+        bestOf: this.parseBesOf(match.find(".versus").find("abbr").text()),
         tournament: match.find(".match-filler").find(".match-countdown + div > div > a").eq(0).attr("title") || "",
         tournamentURL: `https://liquipedia.net/ageofempires/${match
           .find(".match-filler")
@@ -102,21 +104,34 @@ export class LiquipediaService implements IliquipediaService {
           .eq(0)
           .attr("href")}`,
       };
+
+      if (isConcluded) {
+        matchObj.bestOf = this.getBesOfConcluded(matchObj.team1Score, matchObj.team2Score);
+      }
       matchArray.push(matchObj);
     }
 
     return matchArray;
   }
 
+  parseBesOf(bestOf: string): number {
+    const bestOfNumber = bestOf.match(/[0-9]+/);
+    return parseInt(bestOfNumber != undefined ? bestOfNumber[0] : "0");
+  }
+  getBesOfConcluded(score1: number | undefined, score2: number | undefined): number {
+    if (score1 != null && score2 != null) {
+      const bestOfNumber = Math.max(score1, score2);
+      return bestOfNumber - 1 + bestOfNumber;
+    }
+    return 0;
+  }
   parseScore(scoreString: string, returnTeam2 = false): number {
-    console.log(scoreString);
     const scoreSplit = scoreString.split(":");
     const scoreIndex = returnTeam2 ? 1 : 0; // Team 2 value will always be the "right" side number
     return parseInt(scoreSplit[scoreIndex], 10);
   }
 
   parseTime(date: string): string {
-    console.log(date);
     const monthToNumberMap: any = {
       January: "01",
       February: "02",
