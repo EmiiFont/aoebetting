@@ -1,5 +1,5 @@
 import express, { Application } from "express";
-import { ApolloServer } from "apollo-server-express";
+import { ApolloServer, AuthenticationError } from "apollo-server-express";
 import { addResolversToSchema, loadSchemaSync, GraphQLFileLoader } from "graphql-tools";
 import { join } from "path";
 import * as _ from "lodash";
@@ -53,16 +53,12 @@ class App {
     const server = new ApolloServer({
       schema: schemaWithResolvers,
       context: async ({ req }) => {
-        const info = container.get<IContextProvider>(TYPES.ContextProvider);
-
+        const context = container.get<IContextProvider>(TYPES.ContextProvider);
         // get the user token from the headers
         const token = req.headers.authorization || "";
-        if (!token) throw new Error("you must be logged in");
-
-        // try to retrieve a user with the token
         const userId = await this.checkAuth(token);
-        if (!userId) throw new Error("you must be logged in");
-        return Object.assign(info, { userId: userId });
+        if (userId === "") throw new AuthenticationError("you must be logged in");
+        return Object.assign(context, { userId: userId });
       },
     });
 
@@ -70,8 +66,13 @@ class App {
   }
 
   async checkAuth(token: string): Promise<string> {
-    const result = await admin.auth().verifyIdToken(token);
-    return result.uid;
+    try {
+      const result = await admin.auth().verifyIdToken(token);
+      return result.uid;
+    } catch (err) {
+      console.log("Failed to verify: ", JSON.stringify(err));
+    }
+    return "";
   }
 
   public listen(): void {

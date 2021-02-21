@@ -5,7 +5,7 @@ import { MatchCompetitor } from "../entity/matchCompetitor";
 import { MatchInformation } from "../entity/MatchInformation";
 import { MatchDto } from "../model/match";
 import { IContext } from "../model/types";
-import { ILiquipediMatchhList, LiquipediaService } from "../services/liquipediaService";
+import { ILiquipediMatchhList } from "../services/liquipediaService";
 
 const matchResolver: IResolvers = {
   Query: {
@@ -18,7 +18,7 @@ const matchResolver: IResolvers = {
       return context.matchService.getMatchById(id);
     },
     getLiquidpediaMatch(parent, args, context: IContext): Promise<ILiquipediMatchhList> {
-      return new LiquipediaService().getMatchList();
+      return context.liquipediaService.getMatchList();
     },
   },
   Match: {
