@@ -40,6 +40,9 @@ const matchResolver: IResolvers = {
       const { matchInput } = args;
       return context.matchService.addMatch(matchInput as MatchDto);
     },
+    addMatchesFromLiquipedia: async (parent, args, context: IContext): Promise<Match[]> => {
+      return context.matchService.addMatchesFromLiquipedia();
+    },
   },
 };
 export default matchResolver;

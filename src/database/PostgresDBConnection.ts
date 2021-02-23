@@ -19,11 +19,11 @@ class PostgresDBConnection extends BaseDbConnection {
   constructor() {
     const postgresDBConnOptions: ConnectionOptions = {
       type: "postgres",
-      host: dbconfig.host,
-      port: dbconfig.port,
-      username: dbconfig.username,
+      host: process.env.DB_HOST,
+      port: parseInt(String(process.env.DB_PORT)),
+      username: process.env.DB_USER,
       password: process.env.DB_PASS,
-      database: dbconfig.database,
+      database: process.env.DB_NAME,
       synchronize: true,
       namingStrategy: new SnakeNamingStrategy(),
       logging: process.env.NODE_ENV?.trim() == "dev",

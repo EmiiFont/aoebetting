@@ -13,6 +13,7 @@ type Mutation{
     updatePlayer: Boolean
     setUserBet: Boolean
     setSystemBet: [Bet]
+    addMatchesFromLiquipedia: [Match]
 }
 
 type LiquidpediaMatchList {
@@ -59,10 +60,11 @@ type Match {
     title: String
     competitorType: CompetitorType
     bestOf: Int
-    Started: String
-    finished: String
+    startDate: String
+    endDate: String
     lastUpdate: String
     bets: [Bet]
+    tournament: String
     matchCompetitor: [MatchCompetitor]
     matchInformation: [MatchInformation]
 }
@@ -70,10 +72,20 @@ type Match {
 type MatchCompetitor {
     uid: Int
     matchUid: Int
+    competitor: Player
     teamUid: Int
     match: Match
     #team: Team
 }
+ type Team {
+    uid: ID!
+    name: String
+    searchable: Boolean
+    lastUpdate: String
+    #matchCompetitor: MatchCompetitor[];
+    teamPlayers: [Player]
+ }
+
 
 type MatchInformation {
     uid: Int

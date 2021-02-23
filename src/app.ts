@@ -5,6 +5,7 @@ import { join } from "path";
 import * as _ from "lodash";
 import { container, IContextProvider } from "./container";
 import { TYPES } from "./model/types";
+import matchCompetitorResolver from "./resolvers/matchCompetitorResolver";
 import matchResolver from "./resolvers/matchResolver";
 import playerResolver from "./resolvers/playerResolver";
 import * as serviceAccount from "../firebase-config.json";
@@ -47,7 +48,7 @@ class App {
     });
     const schemaWithResolvers = addResolversToSchema({
       schema,
-      resolvers: _.merge(matchResolver, playerResolver),
+      resolvers: _.merge(matchResolver, playerResolver, matchCompetitorResolver),
     });
 
     const server = new ApolloServer({

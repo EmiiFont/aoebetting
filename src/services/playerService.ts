@@ -3,6 +3,7 @@ import * as _ from "lodash";
 import { getRepository, Like } from "typeorm";
 import { Player } from "../entity/Player";
 import { Team } from "../entity/team";
+import { TeamPlayer } from "../entity/teamPlayer";
 import { Pagination } from "../helpers/pagination";
 import { ApiPlayer } from "../model/apiInterfaces";
 import { PlayerDto } from "../model/playerDto";
@@ -15,12 +16,14 @@ export interface IPlayerService {
   getPlayer(id: number): Promise<Player | undefined>;
   getPlayers(page: number, count: number, search: string, sortBy: string): Promise<Pagination<Player>>;
   searchPlayer(name: string): Promise<Player[]>;
+  getPlayerByTeamUid(id: number): Promise<Player | undefined>;
 }
 
 @injectable()
 export class PlayerService implements IPlayerService {
   private _teamRepository = getRepository(Team);
   private _playerRepository = getRepository(Player);
+  private _teamPlayerRepository = getRepository(TeamPlayer);
   private _aoeApiService: IApiPlayerService;
   private _tournamentElo: ITournamentEloService;
 
@@ -141,5 +144,15 @@ export class PlayerService implements IPlayerService {
 
   updatePlayer(playerDto: PlayerDto): Promise<Player> {
     throw new Error("Implement this method");
+  }
+
+  async getPlayerByTeamUid(id: number): Promise<Player | undefined> {
+    const res = await this._teamPlayerRepository.findOne(
+      {
+        teamUid: id,
+      },
+      { relations: ["player"] },
+    );
+    return (res?.player as unknown) as Player;
   }
 }

@@ -1,13 +1,16 @@
 import { injectable } from "inversify";
 import { CompetitorTypeEnum, Match } from "../entity/Match";
+import * as _ from "lodash";
 
 import { getRepository } from "typeorm";
+import { Player } from "../entity/Player";
 import { MatchDto } from "../model/match";
 import { ApiPlayerService } from "./aoe2ApiService";
 import { MatchInformation } from "../entity/MatchInformation";
 import { MatchCompetitor } from "../entity/matchCompetitor";
 import { Team } from "../entity/team";
 import { TeamPlayer } from "../entity/teamPlayer";
+import { IliquipediaService, LiquipediaService } from "./liquipediaService";
 
 export interface IMatchService {
   addMatch(matchDto: MatchDto): Promise<Match>;
@@ -17,6 +20,7 @@ export interface IMatchService {
   setMatchFinished(matchUid: number, tryGetApi: boolean): Promise<Match>;
   getMatchInformationByMatch(matchUid: number): Promise<MatchInformation[] | undefined>;
   getMatchCompetitorByMatch(uid: number): Promise<MatchCompetitor[] | undefined>;
+  addMatchesFromLiquipedia(): Promise<Match[]>;
 }
 
 @injectable()
@@ -25,11 +29,14 @@ export class MatchService implements IMatchService {
   private _matchInformationRepository = getRepository(MatchInformation);
   private _teamRepository = getRepository(Team);
   private _teamPlayerRepository = getRepository(TeamPlayer);
+  private _playerRepository = getRepository(Player);
   private _matchCompetitor = getRepository(MatchCompetitor);
   private _aoeApiService: ApiPlayerService;
+  private _liquidpediaService: IliquipediaService;
 
   constructor() {
     this._aoeApiService = new ApiPlayerService();
+    this._liquidpediaService = new LiquipediaService();
   }
 
   async getMatches(perPage: number, page: number): Promise<Match[]> {
@@ -46,7 +53,7 @@ export class MatchService implements IMatchService {
 
   async setMatchStarted(matchUid: number, tryGetApi: boolean): Promise<Match> {
     const match = await this._matchRepository.findOneOrFail({ uid: matchUid });
-    match.Started = new Date();
+    match.startDate = new Date();
 
     if (tryGetApi) {
       //TODO: get player profile id based on the players in this match
@@ -59,7 +66,7 @@ export class MatchService implements IMatchService {
       }
     }
 
-    this._matchRepository.save(match);
+    await this._matchRepository.save(match);
 
     return match;
   }
@@ -90,17 +97,17 @@ export class MatchService implements IMatchService {
   async addMatch(matchDto: MatchDto): Promise<Match> {
     const matchInformation: Array<MatchInformation> = [];
 
-    const minimumMatchesToPlay = Math.trunc(matchDto.bestOf / 2) + 1;
+    const minimumMatchesToPlay = Math.trunc(matchDto.bestOf || 0 / 2) + 1;
     let matchSaved;
 
     if (matchDto.uid) {
       matchSaved = await this._matchRepository.findOne(matchDto.uid, { relations: ["matchInformation"] });
     }
     if (matchSaved) {
-      matchSaved.title = matchDto.title;
+      matchSaved.title = matchDto.title || "";
       matchSaved.competitorType = matchDto.competitorType;
       matchSaved.lastUpdate = new Date();
-      matchSaved.bestOf = matchDto.bestOf;
+      matchSaved.bestOf = matchDto.bestOf || 0;
       matchSaved = await this._matchRepository.save(matchSaved);
     } else {
       matchSaved = this._matchRepository.create({
@@ -200,5 +207,43 @@ export class MatchService implements IMatchService {
   }
   async getMatchCompetitorByMatch(uid: number): Promise<MatchCompetitor[] | undefined> {
     return await this._matchCompetitor.find({ matchUid: uid });
+  }
+
+  async addMatchesFromLiquipedia(): Promise<Match[]> {
+    const liquiMatches = await this._liquidpediaService.getMatchList();
+    const result = [];
+    for (const curMatch of liquiMatches.upcomingGames) {
+      if (_.isEmpty(curMatch.team1) && _.isEmpty(curMatch.team2)) {
+        continue;
+      }
+      const player1 = await this._playerRepository.findOne({ where: `"name" ILIKE '${curMatch.team1}'` });
+      const player2 = await this._playerRepository.findOne({ where: `"name" ILIKE '${curMatch.team2}'` });
+
+      if (player1 != undefined && player2 != undefined) {
+        const matchTitle = `${curMatch.team1} vs ${curMatch.team2}`;
+        const matchTournament = curMatch.tournament;
+
+        //const matchCompetitor = await this._matchCompetitor.save({});
+        const matchExist = await this._matchRepository.findOne({ title: matchTitle, tournament: matchTournament });
+        if (!matchExist) {
+          const match = await this._matchRepository.save({
+            bestOf: curMatch.bestOf,
+            title: matchTitle,
+            startDate: curMatch.startTime,
+            tournament: matchTournament,
+            competitorType: CompetitorTypeEnum.OneVsOne,
+          });
+          result.push(match);
+          const matchDto: MatchDto = {
+            teamOne: [player1.uid],
+            teamTwo: [player2.uid],
+            competitorType: match.competitorType,
+            searchByTeam: false,
+          };
+          await this.setMatchCompetitor(matchDto, match);
+        }
+      }
+    }
+    return result;
   }
 }

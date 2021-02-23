@@ -40,13 +40,16 @@ export class Match {
   bestOf: number;
 
   @Column({ nullable: true })
-  Started: Date;
+  startDate: Date;
 
   @Column({ nullable: true })
-  finished: Date;
+  endDate: Date;
 
   @Column({ default: new Date() })
   lastUpdate: Date;
+
+  @Column()
+  tournament: string;
 
   @OneToMany(() => Bet, (bet) => bet.match)
   bets: Bet[];

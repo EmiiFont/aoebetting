@@ -7,4 +7,5 @@ export default {
   database: "aoebetting",
   synchronize: true,
   logging: process.env ?? true,
+  //xWNfOpsnnGvpDMrq3h8t
 };
