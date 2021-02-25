@@ -37,6 +37,9 @@ export class User {
   @Column({ type: "date" })
   dateCreated: Date;
 
+  @Column({ type: "decimal" })
+  amount: number;
+
   @OneToMany(() => UserBet, (bet) => bet.bettor)
   bets: UserBet[];
 

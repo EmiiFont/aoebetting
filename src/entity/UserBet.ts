@@ -2,6 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, OneToOne
 
 import { User } from "./User";
 import { Bet } from "./Bet";
+import { UserBetStat } from "./UserBetStats";
 
 /*
  * Components of sports betting:
@@ -37,4 +38,7 @@ export class UserBet {
 
   @ManyToOne(() => User, (user) => user.bets)
   bettor: User;
+
+  @OneToOne(() => UserBetStat, (bet) => bet.userBet)
+  userBetStat: UserBetStat;
 }

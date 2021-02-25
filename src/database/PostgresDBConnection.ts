@@ -1,4 +1,5 @@
 import { SnakeNamingStrategy } from "typeorm-naming-strategies";
+import { UserBetStat } from "../entity/UserBetStats";
 import { BaseDbConnection } from "./BaseDbConnection";
 import { ConnectionOptions } from "typeorm";
 
@@ -39,6 +40,7 @@ class PostgresDBConnection extends BaseDbConnection {
         Player,
         Team,
         TeamPlayer,
+        UserBetStat,
       ],
     };
 

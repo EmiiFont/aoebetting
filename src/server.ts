@@ -34,7 +34,5 @@ dbConn.setUpConnection().then(() => {
       }),
     ],
   });
-
-
   app.listen();
 });
