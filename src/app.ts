@@ -8,7 +8,6 @@ import { TYPES } from "./model/types";
 import matchCompetitorResolver from "./resolvers/matchCompetitorResolver";
 import matchResolver from "./resolvers/matchResolver";
 import playerResolver from "./resolvers/playerResolver";
-import * as serviceAccount from "../firebase-config.json";
 import * as admin from "firebase-admin";
 
 class App {
@@ -22,9 +21,9 @@ class App {
     this.routes(appInit.controllers);
     admin.initializeApp({
       credential: admin.credential.cert({
-        clientEmail: serviceAccount.client_email,
-        privateKey: serviceAccount.private_key,
-        projectId: serviceAccount.project_id,
+        clientEmail: process.env.CLIENT_EMAIL,
+        privateKey: process.env.PRIVATE_KEY,
+        projectId: process.env.PROJECT_ID,
       }),
     });
     this.initGraphql();
@@ -43,7 +42,7 @@ class App {
   }
 
   initGraphql(): void {
-    const schema = loadSchemaSync(join(__dirname, "./schemas/schema.graphql"), {
+    const schema = loadSchemaSync(join(__dirname, "./schemas/**/*.graphql"), {
       loaders: [new GraphQLFileLoader()],
     });
     const schemaWithResolvers = addResolversToSchema({

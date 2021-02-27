@@ -87,10 +87,10 @@ export class PlayerService implements IPlayerService {
 
           //TODO: player has multiple accounts, we need to handle this on the database or no?
           if (aoe2EloPlayer.length > 1) {
-            aoe2EloPlayer.forEach((multipleAccounts) => {
-              if (multipleAccounts != undefined) {
-              }
-            });
+            // aoe2EloPlayer.forEach((multipleAccounts) => {
+            //   if (multipleAccounts != undefined) {
+            //   }
+            // });
           }
           const steamId = aoe2EloPlayer.find((c) => c.steam_id == aoeEloFullPlayer.steam_id);
           if (steamId != undefined) {
@@ -103,8 +103,7 @@ export class PlayerService implements IPlayerService {
 
             if (playerToSave != undefined) {
               //player is retired what to do?
-              if (aoeEloFullPlayer.retired) {
-              } else {
+              if (!aoeEloFullPlayer.retired) {
                 playerToSave.averageRating = averagedElo;
                 playerToSave.aoe2NetRating = first.rating;
                 playerToSave.aoeEloComRating = tournamentElo;

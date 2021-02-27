@@ -150,6 +150,15 @@ export class MatchService implements IMatchService {
       await this._matchCompetitor.save({ teamUid: matchDto.teamOne[0], matchUid: match.uid });
       await this._matchCompetitor.save({ teamUid: matchDto.teamOne[0], matchUid: match.uid });
     } else {
+      const firstTeam = await this._teamRepository.save({
+        name: new Date().getTime().toString(),
+        searchable: false,
+      });
+      const secondTeam = await this._teamRepository.save({
+        name: new Date().getTime().toString(),
+        searchable: false,
+      });
+
       switch (matchDto.competitorType) {
         case CompetitorTypeEnum.OneVsOne:
         case CompetitorTypeEnum.TwoVsTwo:
@@ -158,14 +167,6 @@ export class MatchService implements IMatchService {
         case CompetitorTypeEnum.FreeForAll: {
           //create teams to group the players, this teams are only visible by the system.
           //TODO: search for existing player teams to avoid creating another team with the same player(s)
-          const firstTeam = await this._teamRepository.save({
-            name: new Date().getTime().toString(),
-            searchable: false,
-          });
-          const secondTeam = await this._teamRepository.save({
-            name: new Date().getTime().toString(),
-            searchable: false,
-          });
 
           //add the players selected from the client to the corresponding team. either team is fine
           //we just need a teamId
