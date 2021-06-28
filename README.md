@@ -1,4 +1,7 @@
 # AOE Betting
+
+[![CI](https://github.com/EmiiFont/aoebetting/actions/workflows/build.yml/badge.svg)](https://github.com/EmiiFont/aoebetting/actions/workflows/build.yml)
+
 Place bets for Age of empires  tournaments and showmatches using gold (5). just for fun.
 
 ## Getting started
