@@ -2,7 +2,7 @@
 
 name: CI
 
-# Controls when the action will run. 
+# Controls when the action will run.
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
   push:
@@ -35,7 +35,8 @@ jobs:
       - name: Run Test
         run: npm run test
       - name: Comment with Test Coverage
-        uses: dkershner6/jest-coverage-commenter-action@v1
+        uses: willcaul/jest-github-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          github_token: "${{ secrets.GITHUBTOKEN }}"
-          test_command: "npm run test:coverage"
+          test-command: "npm run test:coverage"

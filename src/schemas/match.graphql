@@ -1,0 +1,66 @@
+type LiquidpediaMatchList {
+    liveGames: [ILiquipediMatch]
+    upcomingGames: [ILiquipediMatch]
+    concludedGames: [ILiquipediMatch]
+}
+
+type ILiquipediMatch {
+    team1: String
+    team1Score: Int
+    team2: String
+    team2Score: Int
+    bestOf: Int
+    startTime: String
+    tournament: String
+    tournamentURL: String
+}
+
+enum CompetitorType {
+    OneVsOne
+    TwoVsTwo
+    ThreeVsThree
+    FourVsFour
+    FreeForAll
+}
+
+type Match {
+    uid: ID!
+    title: String
+    competitorType: CompetitorType
+    bestOf: Int
+    startDate: String
+    endDate: String
+    lastUpdate: String
+    bets: [Bet]
+    tournament: String
+    matchCompetitor: [MatchCompetitor]
+    matchInformation: [MatchInformation]
+}
+
+type MatchCompetitor {
+    uid: Int
+    matchUid: Int
+    competitor: Player
+    teamUid: Int
+    match: Match
+}
+type MatchInformation {
+    uid: Int
+    MatchIdFromApi: String
+    Started: String
+    finished: String
+    lastUpdate: String
+    winnerUid: Int
+    match: Match
+    matchUid: Int
+}
+
+input MatchInput {
+    uid: Int
+    title: String
+    bestOf: Int
+    searchByTeam: Boolean
+    teamOne: [Int]
+    teamTwo: [Int]
+    competitorType: CompetitorType
+}
