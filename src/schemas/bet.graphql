@@ -1,0 +1,22 @@
+type Bet {
+    uid: ID!
+    systemOdd: String
+    datePlaced: String
+    typeUid: String
+    type: BetType
+}
+
+type BetType {
+    uid: ID!
+    name: String
+    rules: String
+}
+
+type UserBet {
+    uid: ID
+    stake: Float
+    odd: Float
+    datePlaced: String
+    betUid: String
+    bet: Bet
+}

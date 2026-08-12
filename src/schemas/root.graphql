@@ -1,0 +1,17 @@
+type Query {
+    players(playersFilter: PlayersFilter): [Player]
+    player(uid: ID!): [Player]
+    autoAdd(top: Int): [Player]
+    matches(perPage: Int, page: Int): [Match]
+    match(uid: ID!): Match
+    getByMatch(matchUid: ID!): [Bet]
+    getLiquidpediaMatch: LiquidpediaMatchList
+}
+
+type Mutation{
+    updatePlayer: Boolean
+    setUserBet: Boolean
+    setSystemBet: [Bet]
+    addMatch(matchInput: MatchInput): Match
+    addMatchesFromLiquipedia: [Match]
+}

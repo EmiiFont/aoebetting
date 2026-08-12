@@ -1,0 +1,39 @@
+
+enum PlayerSortFields {
+    name
+    aoe2NetRating
+    aoeEloComRating
+    steamId
+}
+
+input PlayersFilter {
+    perPage: Int
+    page: Int
+    name: String
+    sortBy: PlayerSortFields
+}
+
+type Player {
+    uid: ID
+    steamId: String
+    name: String
+    steamName: String
+    country: String
+    clan: String
+    aoe2NetRating: Int
+    aoeEloComRating: Int
+    rating: Int
+    averageRating: Float
+    gamesPlayed: Int
+    gamesWon: Int
+    gamesDropped: Int
+    winStreak: Int
+}
+
+type Team {
+    uid: ID!
+    name: String
+    searchable: Boolean
+    lastUpdate: String
+    teamPlayers: [Player]
+}

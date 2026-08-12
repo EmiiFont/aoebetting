@@ -1,0 +1,9 @@
+type User {
+    uid: String
+    firstName: String
+    lastName: String
+    userName: String
+    email: String
+    dateCreated: String
+    lastLogin: String
+}
